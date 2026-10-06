@@ -7,29 +7,12 @@ Status da revisão no navegador: aprovado em 2026-08-02 com o Google Chrome head
 
 
 
-Reprodução
+![Before/after matrix](contact-sheet.png)
 
-Escuro
-
-Claro
-
-Resultado
-
-Dataflow somente com o padrão
-
-antes / depois
-
-antes / depois
-
-Depois mostra apenas data flow; as afirmações de PII, assíncrono, destaque e armazenamento de dados estão ausentes.
-
-Ciclo de vida início → ativo → sucesso
-
-antes / depois
-
-antes / depois
-
-Depois mostra start, active state e terminal success; espera e falha estão ausentes.
+| Reproduction | Dark | Light | Result |
+|---|---|---|---|
+| Dataflow default-only | [before](before-dataflow-dark.png) / [after](after-dataflow-dark.png) | [before](before-dataflow-light.png) / [after](after-dataflow-light.png) | After shows only `data flow`; PII, async, emphasis, and data-store claims are absent. |
+| Lifecycle start → active → success | [before](before-lifecycle-dark.png) / [after](after-lifecycle-dark.png) | [before](before-lifecycle-light.png) / [after](after-lifecycle-light.png) | After shows `start`, `active state`, and `terminal success`; waiting and failure are absent. |
 
 Os resultados do navegador em formato legível por máquina também confirmam zero
 exceções de execução/chamadas a console.error, limites dentro do viewBox, funções interativas exatas
