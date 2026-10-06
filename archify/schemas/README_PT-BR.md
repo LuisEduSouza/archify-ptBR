@@ -34,7 +34,6 @@ Todo objeto `meta` aceita o mesmo formato de legenda opcional sem alterar a vers
     "security": { "label": "restricted data", "visible": true }
   }
 }
-
 ```
 
 O campo `mode` pode ser `auto` (o padrão), `all` ou `hidden`. `auto` inclui apenas os tipos presentes no IR tipado; `all` inclui o catálogo estável completo do renderizador; `hidden` remove a legenda completa e tem precedência sobre as sobreposições de entradas.
@@ -45,26 +44,19 @@ Assim que o autor adiciona `meta.legend` (incluindo o modo explícito `mode: "au
 As chaves suportadas pertencem a cada renderizador:
 
 | Renderizador | Chaves para `meta.legend.entries` |
-| --- | --- |
+|---|---|
 | Architecture | `frontend`, `backend`, `database`, `cloud`, `security`, `messagebus`, `external` |
 | Workflow | `frontend`, `backend`, `security`, `messagebus`, `database`, `cloud`, `external` |
 | Sequence | `emphasis`, `return`, `security`, `dashed`, `default` |
 | Dataflow | `emphasis`, `security`, `dashed`, `database`, `default` |
 | Lifecycle | `start`, `active`, `waiting`, `decision`, `success`, `failure`, `neutral`, `external` |
 
-Os rótulos (labels) destinam-se apenas à apresentação: eles não renomeiam o tipo estável, não alteram nós/relacionamentos, nem criam fatos de aresta no Semantic Lens. Mensagens de Sequence e variações de fluxo de Dataflow são chaves visuais. Entradas de componentes/estados respaldadas por fatos compilados exatos de nós recebem a ponte interativa da Legenda Semântica; isso inclui `database` em Dataflow quando existe um fato real `nodes[].type: "database"`.
+Os rótulos (labels) destinam-se apenas à apresentação: eles não renomeiam o tipo estável, não alteram nós/relacionamentos, nem criam fatos de aresta no Semantic Lens. Mensagens de Sequence e variações de fluxo de Dataflow são chaves visuais. Entradas de componentes/estados respaldadas por fatos compilados exatos de nós recebem a ponte interativa da Legenda Semântica; isso includes `database` em Dataflow quando existe um fato real `nodes[].type: "database"`.
 
 Toda coleção de relacionamentos (`connections`, `edges`, `messages`, `flows` e `transitions`) aceita um `id` opcional controlado pelo autor usando o padrão de ID compartilhado. O renderizador mantém sua chave em tempo de execução na ordem de origem separadamente, enquanto o ID definido pelo autor permite um link estável no visualizador `#relation=<id>` que sobrevive à reordenação dos arrays. Documentos sem ID permanecem válidos e a fixação de seus relacionamentos permanece local na página atual.
 
 Toda coleção de nós semânticos (`components`, `nodes`, `participants` e `states`) também aceita uma marca opcional `brand`: seja uma string canônica retornada por `archify brands --json`, ou um objeto `{ "url", "sha256" }` com hash fixo retornado por `archify brands capture <url> --json`. IDs conhecidos e domínios de marcas conhecidas usam o catálogo vetorial integrado. URLs desconhecidas devem ser capturadas por esse comando explícito antes da autoria; as etapas de renderização e validação nunca realizam uma captura de rede sem hash fixo. Conteúdos não seguros, indisponíveis, alterados ou não suportados falham imediatamente com um diagnóstico de marca. A omissão de `brand` preserva a saída anterior.
 
-```
-
----
-
-### Parte 2 (Da "Política de `schema_version`" até ao fim):
-
-```markdown
 ## Política de `schema_version`
 
 O tipo Workflow suporta as versões 1 e 2 do esquema. A versão 1 permanece como o contrato de compatibilidade para layout fixo; a versão 2 adota o compilador legível de workflow e pode ser gerada explicitamente com `archify migrate workflow ... --to-schema 2`.
@@ -114,11 +106,6 @@ Violações de esquema encerram a execução com código diferente de zero. Cada
 ```text
 workflow schema validation failed:
   /nodes/3 (id/label: "router") must NOT have additional properties {"additionalProperty":"colour"}
-
 ```
 
 Os esquemas identificam erros de formato (tipos, enumerações, faixas de valores, campos desconhecidos); problemas de geometria, como sobreposições e colisões de rótulos, são responsabilidade dos renderizadores.
-
-```
-
-```
