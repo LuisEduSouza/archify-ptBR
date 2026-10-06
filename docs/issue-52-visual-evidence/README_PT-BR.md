@@ -9,7 +9,7 @@ Status da revisão no navegador: aprovado em 2026-08-02 com o Google Chrome head
 
 ![Before/after matrix](contact-sheet.png)
 
-| Reproduction | Dark | Light | Result |
+| Reprodução | Escuro | Claro | Resultado |
 |---|---|---|---|
 | Dataflow default-only | [before](before-dataflow-dark.png) / [after](after-dataflow-dark.png) | [before](before-dataflow-light.png) / [after](after-dataflow-light.png) | After shows only `data flow`; PII, async, emphasis, and data-store claims are absent. |
 | Lifecycle start → active → success | [before](before-lifecycle-dark.png) / [after](after-lifecycle-dark.png) | [before](before-lifecycle-light.png) / [after](after-lifecycle-light.png) | After shows `start`, `active state`, and `terminal success`; waiting and failure are absent. |
