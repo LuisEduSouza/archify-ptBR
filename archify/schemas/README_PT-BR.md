@@ -1,4 +1,3 @@
-```markdown
 # Esquemas IR em JSON do Archify
 
 Cada renderizador tipado consome uma representação intermediária (IR) em JSON validada com base em um dos esquemas desta pasta antes que qualquer trabalho de layout ocorra.
