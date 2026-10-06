@@ -48,7 +48,7 @@ relato, para que os usuários afetados possam receber orientações precisas sob
 ## Bugs não relacionados à segurança
 
 Use [o formulário de relatório de bug](.github/ISSUE_TEMPLATE/bug-report.yml) para
-defeitos funcionais, de renderização, validação, compatibilidade, empacotamento ou documentação
+defeitos funcionais, de renderização, validação, compatibilidade, e""mpacotamento ou documentação
 que não causem impacto na segurança.
 
 Se você não tiver certeza se uma descoberta é sensível à segurança, relate-a de forma privada.
