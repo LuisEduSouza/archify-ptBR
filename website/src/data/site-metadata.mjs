@@ -1,8 +1,16 @@
 import { canonicalUrl, canonicalOrigin } from './site-urls.mjs';
 const descriptions = {
+  'cases/mco-runtime': {
+    en: ['Archify MCO Runtime Case — Source-backed Architecture', 'Follow pinned MCO source to distinguish provider-output decoding, streamed answer writes and retained artifacts. Read the existing Archify diagram with explicit evidence limits.'],
+    zh: ['Archify MCO 运行时案例 — 对照源码阅读架构', '沿固定版本的 MCO 源码区分输出解码、流式答案写入与产物保留，结合已有 Archify 架构图理解职责、持久化条件与证据边界。'],
+  },
+  'agent-diagrams': {
+    en: ['Archify Agent Diagramming Guide — Author, Review, Share', 'Create diagrams with Claude Code, Codex, Cursor and other coding agents. Learn bounded prompts, repository evidence, review checks and safe HTML sharing with Archify.'],
+    zh: ['Archify Agent 画图指南 — 编写、检查与分享', '用 Claude Code、Codex、Cursor 等 Coding Agent 画图：从范围明确的提示词和仓库证据开始，检查事实、修改图表，再安全分享 Archify HTML 成品。'],
+  },
   index: {
-    en: ['Archify — AI Agent Skill for Interactive Diagrams', 'Archify is an MIT-licensed AI agent skill for validated HTML diagrams from descriptions or code, with interactive exploration and browser export.'],
-    zh: ['Archify — 用自然语言生成交互式图表', 'Archify 是采用 MIT 许可证的 AI Agent 技能，可从自然语言或源码生成经过验证的独立 HTML 图表，支持交互探索与浏览器导出。'],
+    en: ['Archify — AI Agent Skill for Interactive Diagrams and One-Page Answers', 'Archify is an MIT-licensed AI agent skill for validated HTML diagrams and conclusion-first one-page answers from descriptions or code, with interactive exploration, cited sources and browser export.'],
+    zh: ['Archify — 用自然语言生成交互式图表和一页式解答', 'Archify 是采用 MIT 许可证的 AI Agent 技能，可从自然语言或源码生成经过验证的独立 HTML 图表和结论在前、标注出处的一页式解答，支持交互探索与浏览器导出。'],
   },
   guide: {
     en: ['Archify Scenario Guide — Choose the Right Diagram', 'Choose an Archify diagram recipe for your question. Browse evidence checklists, use cases, boundaries, and prompts linked to the recipe source.'],
@@ -13,8 +21,8 @@ const descriptions = {
     zh: ['Archify 快速上手 — 创建第一张图', '为你的 AI Agent 安装 Archify 技能，从自然语言或代码仓库创建图表。选择 Agent、图表类型和输入方式，复制对应的命令与提示词。'],
   },
   gallery: {
-    en: ['Archify Proof Lab — Validated Diagram Gallery', 'Explore validated Archify diagrams with interactive HTML, JSON sources, and recorded checks. Automated validation and human visual review appear separately.'],
-    zh: ['Archify 验证作品集 — 可探索的图表成品', '探索经过验证的 Archify 图表，查看交互式 HTML 成品、对应 JSON 源码与检查记录。自动验证与人工视觉评审分别列出。'],
+    en: ['Archify Proof Lab — Validated Diagram Gallery', 'Explore validated Archify diagrams and one-page answers with interactive HTML, their JSON or Markdown sources, and recorded checks. Automated validation and human visual review appear separately.'],
+    zh: ['Archify 验证作品集 — 可探索的图表成品', '探索经过验证的 Archify 图表和一页式解答，查看交互式 HTML 成品、对应的 JSON 或 Markdown 源码与检查记录。自动验证与人工视觉评审分别列出。'],
   },
   community: {
     en: ['Archify Community — Packages Built on Archify', 'Explore independent packages built on Archify: skills, recipes, themes, locales, and CLI wrappers, with source, license, compatibility, and evidence.'],
@@ -28,6 +36,7 @@ export function pageMetadata(page, lang, version) {
     schema: { '@context': 'https://schema.org', '@graph': [
       { '@type': 'WebSite', '@id': `${canonicalOrigin}/#website`, url: `${canonicalOrigin}/`, name: 'Archify', inLanguage: ['en', 'zh-Hans'] },
       { '@type': 'SoftwareSourceCode', '@id': `${canonicalOrigin}/#source`, name: 'Archify', codeRepository: 'https://github.com/tt-a1i/archify', url: 'https://github.com/tt-a1i/archify', license: 'https://github.com/tt-a1i/archify/blob/main/LICENSE', version, programmingLanguage: 'JavaScript', description: descriptions.index[lang][1] },
+      ...(['agent-diagrams', 'cases/mco-runtime'].includes(page) ? [{ '@type': 'TechArticle', '@id': `${canonical}#article`, url: canonical, headline: title, description, inLanguage: lang === 'zh' ? 'zh-Hans' : 'en', isPartOf: { '@id': `${canonicalOrigin}/#website` }, about: { '@id': `${canonicalOrigin}/#source` } }] : []),
     ] },
   };
 }
