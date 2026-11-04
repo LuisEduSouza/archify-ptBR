@@ -813,3 +813,648 @@ A abertura, o status de pré-visualização, os Cartões de Compartilhamento e o
 A finalização da publicação do recibo utiliza o mesmo editor vinculado à identidade, sem sobrescrita, e os registros de recuperação explícitos descritos acima. Os recibos completos e resumidos devem ser distintos do recibo candidato, do artefato, dos metadados de entrega e do recibo do navegador. Seus destinos devem estar ausentes ou ser arquivos regulares com um único link; entradas de recibo com links simbólicos e destinos com links físicos falham na conclusão. Um requerente posterior ou um pai alterado interrompe a publicação e permanece inalterado. Os nomes padrão dos recibos compartilham o namespace físico do artefato e estão sujeitos ao limite de nome de arquivo do host. Os dois recibos são publicados individualmente, não como um par atômico em caso de falha; somente um comando concluído com sucesso constitui uma transferência bem-sucedida.
 
 
+
+# Contrato de criação
+
+Leia esta referência somente quando o caminho rápido de criação exigir mais detalhes. Os esquemas e exemplos continuam sendo a fonte oficial.
+
+## Correção de composição
+
+Ao corrigir a abstração de uma visão geral criada, mapeie cada função, direção de relação, protocolo, limite, condição e referência de origem afetados para seu nó ou relação remanescente antes de reagrupar. Uma citação inicial não comprova um protocolo de mensagem. Preserve as evidências inspecionadas de cada afirmação. Mantenha fixa a topologia fornecida pelo usuário ou acordada; o simples fato de haver menos rotas não justifica a fusão. Um limite em torno de um nó requer um fato de isolamento explícito e não deve se limitar a repetir seu rótulo.
+
+## Correção de rótulos
+
+Quando houver conflito entre rótulos de relações, mova o rótulo, ajuste a rota ou o espaçamento e, em seguida, encurte o texto, preservando o significado. Omita o texto somente quando ambos os pontos finais o impliquem totalmente e ele não transmita nenhum protocolo, ação, direção, comportamento síncrono ou assíncrono, nem mecanismo de cruzamento de limites. Espaçamento significa intervalo claro, e não distância central; a largura medida da máscara tem precedência. O orçamento de intervalo do primeiro rascunho está em [Layout e roteamento](authoring-defaults.md#layout-and-routing).
+
+Para um subrótulo desproporcional, mantenha concisa sua função ou protocolo exato e coloque a informação complementar em uma nota ou cartão. Preserve todas as responsabilidades, protocolos e informações de limite necessárias. Use o orçamento de largura de nó da primeira versão em [Layout e roteamento](authoring-defaults.md#layout-and-routing).
+
+## Consulta do esquema
+
+Leia tanto o esquema do modo quanto o arquivo `schemas/common.schema.json`. Os esquemas dos modos utilizam `$ref`, portanto, o arquivo comum é onde residem as enums compartilhadas.
+
+- `componentType`: `frontend`, `backend`, `database`, `cloud`, `security`, `messagebus`, `external`
+- Documentos de entidade-relação usam `entities` e `relationships`; `key` aceita `pk`, `fk` ou `uk`, e `fromCardinality`/`toCardinality` aceitam `one` ou `many`.
+- `variant`: `default`, `emphasis`, `security`, `dashed`
+- IDs de relação usam o padrão de identificador compartilhado e devem ser únicos em sua coleção.
+
+Não invente campos. Antes de criar qualquer novo campo, enumeração ou texto restrito, leia a definição do esquema, incluindo destinos comuns de `$ref`. Em particular, verifique os tipos de limite, a identidade do repositório e os formatos de referência de origem. Um exemplo demonstra a estrutura; ele não enumera todos os valores válidos. Crie novos IDs, redação, fatos e layout.
+
+## Contratos de layout de fluxo de trabalho
+
+Use o esquema v2 para novos fluxos de trabalho e mantenha o esquema v1 quando uma fonte existente precisar
+manter a geometria fixa. Em ambas as versões, `col` permanece no intervalo `0..5` e os rótulos semânticos
+das arestas nunca são excluídos como correção de espaçamento. Não altere apenas
+`schema_version` quando houver coordenadas absolutas: siga o
+[contrato canônico de migração e recebimento de layout](../renderers/workflow/README.md#migration-and-layout-receipt).
+As invariantes normativas completas estão nos
+[contratos de layout](../renderers/workflow/README.md#layout-contracts) do renderizador de fluxo de trabalho.
+Para estágios sequenciais empilhados em um único contêiner, use uma faixa v2 e um grupo,
+omita `meta.viewBox` e centralize os nós em torno do conteúdo da faixa com valores simétricos
+de `yOffset`, como `-90 / 0 / 90`. Mantenha os rótulos semânticos das bordas e atue de acordo com
+os diagnósticos do compilador.
+
+## Contrato de legenda
+
+Omita `meta.legend` para obter o padrão correto: `auto` lista apenas os tipos semânticos
+presentes no IR tipado. Use `mode: “all”` para uma referência ao renderizador ou
+`mode: “hidden”` para remover a legenda completa. Em `entries`, apenas as chaves listadas
+pelo esquema de modo selecionado são válidas; cada chave aceita `label`, `visible` ou
+ambos. `visible: true` pode exibir uma convenção suportada, mas não utilizada, enquanto
+`visible: false` a oculta. `hidden` não pode ser substituído.
+
+A substituição de um rótulo altera apenas o texto exibido ao leitor. Nunca se deve inferir um tipo a partir do texto nem
+usar a legenda para compensar a ausência de nós, estados, mensagens ou fluxos.
+Rótulos longos são medidos e quebrados em linhas determinísticas. A
+viewBox automática implícita da arquitetura se expande a partir dessa mesma área medida, e uma
+tela automática de ERD é dimensionada da mesma forma, de modo que sua legenda padrão esteja sempre no
+conteúdo gerado. Por motivos de compatibilidade com versões anteriores, um documento legado sem
+`meta.legend` pode omitir uma legenda automática implícita que não caiba em sua
+viewBox explícita; isso nunca altera sua topologia tipada. Um ERD que define um
+`meta.viewBox` mantém essa área fixa e informa a capacidade, em vez de
+omitir a legenda. Adicionar `meta.legend` torna a apresentação intencional e
+rigorosa: se seus rótulos resolvidos não couberem na viewBox definida, encurte-os ou oculte-os,
+ou amplie a viewBox usando o diagnóstico emitido.
+
+## Consistência de idioma
+
+Escolha um idioma principal de criação. A escolha explícita do usuário prevalece; caso contrário,
+use o idioma da solicitação ou o idioma dominante da conversa quando
+a própria solicitação for neutra em termos de idioma. Escolha separadamente a localização do Visualizador.
+Sempre escreva o `meta.locale` correspondente como uma tag de idioma bem formada: `“en”`
+para inglês, `“zh-CN”` para chinês simplificado, `“es”` para espanhol ou qualquer
+outra tag para outro idioma. O renderizador utiliza a localidade definida pelo autor sem inferir o idioma
+a partir das strings do diagrama. Documentos que a omitem permanecem válidos e assumem o
+inglês como padrão.
+
+`meta.locale` controla apenas as superfícies de leitura pertencentes ao renderizador: `<html lang>`, o
+sufixo do título do documento, a descrição SVG padrão e os rótulos de foco, os rótulos padrão da legenda
+e os controles fixos do Visualizador, status, nomes de acessibilidade e erros.
+Ele nunca traduz o conteúdo criado. Aplique o idioma principal separadamente a
+títulos, subtítulos, texto de nós e relações, limites, faixas, grupos,
+substituições de rótulos de legenda e cartões. Um diagrama bilíngue ainda
+escolhe uma localidade principal para o Visualizador; siga uma solicitação explícita de idioma principal
+e, em seguida, a ordem de solicitação ou a predominância na conversa.
+
+Os catálogos do Visualizador incluídos estão registrados em `locales/manifest.json`: atualmente
+`en`, `zh-CN`, `zh-TW`, `es`, `ko` e `ar`. Para esses, apenas `meta.locale` seleciona o
+catálogo completo. As tags correspondem sem distinção de maiúsculas e minúsculas (`zh-cn` seleciona `zh-CN`), mas as variantes de região
+e escrita são distintas: `zh-Hant`, `es-MX` ou `ko-KR` não selecionam nenhum
+catálogo incluído no pacote.
+
+`meta.translations` é uma substituição opcional por chave: um objeto que mapeia as
+chaves de mensagem canônicas do renderizador (`locales/en.json` ou `catalogKeys()` em
+`renderers/shared/i18n.mjs`) para strings traduzidas cujos tokens `{placeholder}`
+correspondem exatamente à fonte em inglês. Cada mensagem é resolvida da seguinte forma: valor válido de
+`meta.translations` → o catálogo integrado selecionado → inglês. Para uma
+localidade integrada, forneça apenas as chaves cujo texto o diagrama precise alterar;
+o restante do idioma é mantido. Omitir o campo ou fornecer `{}` significa que não há
+substituição. Para um idioma sem catálogo integrado, forneça o catálogo aqui.
+Reutilize traduções adequadas de `examples/locales/` ou de um catálogo revisado anteriormente,
+traduza as chaves ausentes e use o texto original em inglês para verificar as chaves e
+os placeholders.
+
+Uma chave desconhecida ou um valor com placeholders incompatíveis é rejeitado e mantém
+a mensagem de prioridade mais baixa; isso é relatado como `i18n/invalid-translation` no
+stderr e como um aviso no `diagnostics[]` dos recibos de `validate --json`, `deliver` e `finalize`.
+As Chaves que ainda são resolvidas para o inglês em uma
+localidade que não seja em inglês são relatadas como `i18n/translation-coverage`, com as chaves ausentes
+e seu texto-fonte em inglês; adicione exatamente essas chaves para corrigir a lacuna.
+A cobertura descreve o catálogo final resolvido, não o tamanho da substituição.
+
+Para um idioma solicitado para o qual você não possa fornecer `meta.translations`, não
+escreva um `meta.locale` sem catálogo incluído e sem traduções. Mantenha todas as
+sequências de texto criadas voltadas para o leitor no idioma solicitado, omita `meta.locale` para que
+o renderizador use o inglês com segurança e informe explicitamente ao usuário que a
+interface do Visualizador e o `<html lang>` permanecem em inglês e que o artefato não está totalmente localizado.
+O recurso de fallback se aplica apenas às superfícies de propriedade do renderizador; ele nunca
+permite que o texto de autoria recorra ao inglês. Não substitua silenciosamente
+`zh-CN` por outro idioma ou localidade chinesa, e não traduza automaticamente
+os valores de `meta.translations` sem divulgar que eles não foram revisados.
+
+Mantenha intactos os nomes exatos de produtos, identificadores de código, comandos, protocolos, caminhos de API e
+nomes de ambiente. Esses termos podem permanecer em inglês dentro do texto localizado,
+mas o texto explicativo ao redor ainda deve usar o idioma selecionado.
+Os rótulos padrão de legendas pertencentes ao renderizador seguem `meta.locale`; crie uma
+substituição `meta.legend.entries.*.label` somente quando o diagrama precisar de uma
+formulação diferente do domínio e mantenha essa substituição criada no idioma principal.
+
+## Predefinição visual padrão
+
+Omita `meta.visual_preset` por padrão. O renderizador, então, abre o diagrama no
+modo `classic`, tanto no modo de cores claras quanto no escuro. O modo de cores e a predefinição visual são
+independentes do estado do visualizador: a alternância entre Claro e Escuro deve preservar a
+predefinição atual. Defina `signal-flow`, `blueprint` ou `editorial` apenas quando o usuário
+solicitar explicitamente esse estilo visual.
+
+## Padrão do perfil de engenharia
+
+Omita `meta.engineering_profile` para uma arquitetura de sistema comum. Termos como região,
+cluster e limite de segurança, por si só, não ativam um
+perfil de engenharia. Ative `deployment-ownership` somente quando o usuário
+solicitar explicitamente uma topologia de implantação em produção, transferência de propriedade ou
+revisão de implantação com falha fechada, e os fatos de origem forem conhecidos. Uma vez ativado,
+não remova o perfil de engenharia apenas para passar na validação; corrija os
+fatos criados ou relate os diagnósticos com veracidade.
+
+## Hierarquia de títulos
+
+Use um título conciso e deixe que o diagrama transmita a explicação. Omita
+`meta.subtitle` por padrão e nunca o utilize para repetir o título, nós, arestas
+ou cartões. Inclua apenas uma breve linha de apoio quando o usuário solicitar explicitamente
+um subtítulo; um subtítulo omitido ou em branco não deve deixar uma linha visual vazia
+no visualizador gerado.
+
+## Regras de geometria executável
+
+Gere um artefato responsivo para laptops e monitores externos, preservando o SVG/viewBox criado, as proporções, a geometria semântica e o fluxo normal do documento. Use linhas de conteúdo significativas e o comportamento de rolagem de página legível declarado pelo Reader quando o diagrama completo precisar de mais altura; o ajuste à janela de visualização não autoriza topologia alternativa ou tipografia menor.
+
+- As âncoras dos nós começam nos pontos médios laterais. `left`/`right` alteram o ponto final horizontal; `top`/`bottom` alteram o ponto final vertical. Para uma relação de Arquitetura automática, portas voltadas uma para a outra e desobstruídas, cujo deslocamento do eixo seja inferior a 16px, podem compartilhar um eixo horizontal ou vertical quando ambos os pontos finais mantêm a margem de canto de 16px. Se exatamente um ponto final pertencer a um grupo de expansão, apenas sua contraparte não compartilhada se move; relações que se expandem em ambos os pontos finais mantêm suas portas distintas e ponte externa, a menos que um par recíproco voltado um para o outro possa usar conjuntamente faixas retas separadas, preservando o espaçamento dos pontos finais, os rótulos e todas as distâncias de segurança em torno das rotas e obstáculos.
+- Um lado é um contrato de direção. O primeiro e o último segmento da rota devem ser perpendiculares e voltados para fora/dentro na direção indicada.
+- Em diagramas de arquitetura e de fluxo de dados, a especificação explícita `route: “straight”` solicita um segmento direto, que pode ser diagonal quando os lados dos pontos finais não estão fixados. O verificador de artefatos preserva essa intenção; lados explícitos, espaço livre em relação a nós opacos e outros critérios de qualidade ainda se aplicam. `via` tem precedência e mantém as regras existentes, incluindo a exigência do fluxo de dados para segmentos “via” ortogonais.
+- A dispersão automática de portas é um comportamento padrão do renderizador para diagramas de arquitetura, fluxo de trabalho e fluxo de dados. Pontos finais automáticos compartilhados se dispersam de forma determinística e simétrica com uma margem de canto de 16px. Isso não se aplica a mensagens de sequência, relações únicas ou rotas explícitas `via`, `channelX`, `channelY`, `labelAt` ou rotas que não sejam `auto`.
+- Destaque o ritmo da rota: todo segmento diferente de zero deve ter pelo menos 8 px; todo segmento interno deve ter pelo menos 16 px. Quando as portas distribuídas estão quase paralelas, o roteador usa um stub de ponto final de 24 px e uma ponte externa de 16 px, em vez de criar uma pequena curva em ângulo reto.
+- Destaque a compactação da rota: uma rota de Arquitetura explícita falha com `composition/excessive-route-detour` quando seu comprimento ortogonal é pelo menos 2,5 vezes maior que uma rota válida que leva em conta obstáculos, acrescenta pelo menos 200px e envia um ponto de controle pelo menos 96px além do envelope de conteúdo. A evidência registra ambos os comprimentos, a proporção, o excesso, os limites e o desvio. Remova um `via` desnecessário ou mova o corredor diagnosticado para dentro, em vez de ampliar a tela. Relações relacionadas que se sobreponham no mesmo corredor externo em pelo menos 32px são tratadas como um ônibus intencional e permanecem válidas.
+- Corredores com pontos finais compartilhados são permitidos apenas quando permanecem semanticamente inequívocos. Sobreposições colineares não relacionadas de 8 px ou mais resultam em falha na avaliação.
+- As bordas do contêiner são geometria de passagem intencional, mas uma aresta longa que se estende ao longo de uma borda estrutural não é.
+- Uma aresta que cruza um nó opaco não relacionado é sempre uma falha grave, independentemente do perfil de qualidade.
+
+### Coordenadas explícitas de `via`
+
+Use a âncora de partida resolvida `S = [sx, sy]` e a âncora de chegada
+`T = [tx, ty]`. As âncoras começam nos pontos médios laterais, mas o roteamento automático e
+o Port Spread podem movê-las conforme descrito acima; não presuma que uma âncora copiada
+de uma rota automática seja a âncora de uma rota explícita recém-criada.
+Rotas explícitas `via` não recebem Port Spread automático.
+
+Para o primeiro ponto de passagem `F = via[0]` e o último ponto de passagem `L = via[via.length - 1]`,
+use estes alinhamentos e direções (o eixo y do SVG aumenta para baixo):
+
+| Lado | Partida (`fromSide`): `S` → `F` | Chegada (`toSide`): `L` → `T` |
+| --- | --- | --- |
+| `top` | `F[0] === sx`, `F[1] < sy` | `L[0] === tx`, `L[1] < ty` |
+| `bottom` | `F[0] === sx`, `F[1] > sy` | `L[0] === tx`, `L[1] > ty` |
+| `esquerda` | `F[1] === sy`, `F[0] < sx` | `L[1] === ty`, `L[0] < tx` |
+| `direita` | `F[1] === sy`, `F[0] > sx` | `L[1] === ty`, `L[0] > tx` |
+
+Por exemplo, dado um ponto de partida inferior `S = [180, 160]` e um ponto de
+chegada à esquerda `T = [360, 260]`, este fragmento de relação sai para baixo
+e entra no destino pela direita:
+
+```json
+{
+  “from”: “source”,
+  “to”: “target”,
+  “fromSide”: “bottom”,
+  “toSide”: “left”,
+  “via”: [[180, 200], [300, 200], [300, 260]]
+}
+```
+
+O caminho completo é `[180, 160] → [180, 200] → [300, 200] → [300, 260] → [360, 260]`.
+Alterar apenas o primeiro ponto de passagem para `[200, 200]` torna a saída diagonal;
+alterá-lo para `[180, 120]` mantém o eixo x alinhado, mas faz com que a rota saia para cima pela
+origem, em vez de para fora pela parte inferior. Ambos violam `fromSide: “bottom”`
+e geram `clean-flow/endpoint-side-direction`. O exemplo estabelece
+apenas a direção do ponto final: mantenha a rota completa livre de nós não relacionados e
+aplique as outras regras de geometria acima.
+
+### Espaçamento e rótulos
+
+Na arquitetura de demonstração, um rótulo de conexão não fixado mantém sua posição padrão
+quando está livre. Se houver colisão, o renderizador tenta um conjunto limitado de posições próximas
+ao longo da rota existente, evitando nós, títulos de limites, outros rótulos e
+outras rotas dentro da tela resolvida. Valores explícitos de `labelAt`, `labelDx`, `labelDy`
+ou `labelSegment` (incluindo zero) desativam esse recurso alternativo. As rotas e a topologia
+permanecem inalteradas; se nenhuma posição próxima estiver livre, a validação reporta a
+colisão original. Inspecione as legendas resolvidas com `--layout-json` antes de adicionar controles.
+O posicionamento padrão mantém seu comportamento existente.
+
+As recomendações de espaçamento referem-se a um espaço livre entre as caixas, não à distância entre os centros. Uma distância de 200px entre os centros de nós com 165px de largura deixa apenas 35px de espaço livre.
+
+Para um rótulo de relação, é necessário:
+
+```texto
+espaço livre > largura da máscara do rótulo + 8px de margem
+largura da máscara do rótulo ≈ 6,5px × unidades ASCII + 13px
+Caracteres CJK contam como duas unidades
+```
+
+Rótulos de relação são dados semânticos. Se o espaço for muito pequeno, mova o rótulo,
+ajuste a rota ou o espaçamento e, em seguida, encurte o texto preservando o significado.
+Omita apenas o texto já totalmente implícito em ambos os pontos finais e que não contenha
+protocolo, ação, direção, comportamento síncrono/assíncrono ou
+mecanismo de transposição de limites. Preserve todos os rótulos significativos.
+Excluí-lo não é uma correção de espaçamento. Se uma relação começar sem rótulo porque
+seus pontos finais a implicam totalmente, explique por que o texto é redundante; essa é uma
+escolha semântica de autoria, não uma correção de espaçamento. No fluxo de trabalho v2, permita que o compilador
+aloque sua máscara medida antes de aplicar um `labelAt`,
+`labelDx`/`labelDy` ou `labelSegment` diagnosticado. Aplique um controle de geometria diagnosticado por
+vez, a menos que várias arestas compartilhem um canal restrito. Nesse caso, planeje a menor alteração acoplada a partir da geometria medida e
+valide-a em conjunto. A arquitetura/fluxo de trabalho fornecem evidências de layout por meio de
+`validate <type> <candidate.json> --layout-json`; para outros tipos, use diagnósticos de validação
+e a geometria SVG renderizada.
+Antes de adicionar rotas manuais, verifique se controles desnecessários adicionados pelo agente
+desativam a distribuição automática de portas; preserve a intenção de rota exigida pelo usuário. Use as
+regras de espaço livre medidas acima, em vez de adivinhar coordenadas.
+
+### Evidências de correção
+
+Para a arquitetura, `validate architecture <input.json> --layout-json` expõe as
+caixas de componentes resolvidas, molduras de limite, pontos de conexão e posições de rótulos.
+Um layout rejeitado mensurável também retorna esses campos, com `ok: false`,
+`contract: “archify-architecture-layout-v1”`, diagnósticos e saída 1. Isso é
+evidência de reparo, não aceitação do artefato; não gera HTML. Uma entrada malformada ou
+uma falha de implementação mantém o recibo de falha comum, sem layout.
+
+Use o lado com falha medido para `layout/boundary-out-of-bounds`. Coordenadas negativas à esquerda/topo
+precisam de um deslocamento para dentro; aumentar a largura/altura da viewBox apenas
+resolve o estouro à direita/parte inferior. Os limites podem envolver membros em várias linhas. Mantenha
+a associação real intacta e verifique novamente as rotas conectadas após mover os membros.
+
+As telas de arquitetura automáticas incluem pontos de rota, bem como nós, quadros
+e rótulos. Uma viewBox definida pelo autor continua sendo a referência. Na vitrine,
+`layout/route-out-of-bounds` identifica pontos de rota recortados; coordenadas negativas
+exigem uma rota para dentro, enquanto o transbordamento à direita/na parte inferior também pode utilizar uma tela maior
+definida pelo autor. Verifique novamente a legibilidade na área de trabalho após ampliar uma tela.
+
+Quando vários diagnósticos de cruzamentos/corredores envolverem os mesmos nós, considere
+colocá-los juntos antes de adicionar controles de rota. Aplique uma correção coerente e
+valide-a; ajustes independentes nas etiquetas não conseguem resolver um gargalo compartilhado no layout.
+Compare os diagnósticos por código, assunto e estágio, em vez de apenas pela contagem total.
+
+### Ordem de correção
+
+1. Corrija erros de `meta.quality_profile` ausentes ou inválidos e erros de esquema.
+2. Corrija sobreposições de nós ou posicionamento fora do intervalo permitido.
+3. Corrija erros de arestas que atravessam nós e de direção dos pontos finais.
+4. Corrija cruzamentos, corredores ambíguos, trajetos ao longo de fronteiras, desvios excessivos e o ritmo da rota.
+5. Corrija a distância entre rótulo e nó, entre rótulos e, em seguida, entre rótulo e rota.
+6. Corrija rótulos que saem da tela: mova o rótulo com `labelAt`/`labelDx`/`labelDy`/`labelSegment` ou amplie `meta.viewBox`. Os valores sugeridos para `labelDx`/`labelDy` substituem o campo inserido pelo autor; eles não são adicionados a ele.
+
+Após cada edição, execute novamente o `finalize` completo, conforme exigido pelo contrato de entrega; use `validate` apenas para diagnóstico específico entre as execuções do `finalize`. Analise `diagnostics[]` por `code` estável, `subject` exato, `evidence` medida e `supportedFixes`. Se o diagnóstico fornecer `labelAt`, use esse ponto em vez de estimar outro deslocamento.
+
+## Posicionamento do modo
+
+### Arquitetura
+
+Escolha entre uma visão geral ou detalhes do mecanismo usando [Composição e significado](authoring-defaults.md#composition-and-meaning). Use um caminho de leitura principal óbvio, que pode atravessar linhas significativas quando a topologia solicitada precisar de espaço. Mantenha a visão geral legível no nível de abstração escolhido; expanda os detalhes de implementação quando eles responderem às perguntas do leitor. Agrupe apenas limites reais de propriedade, confiança, processo ou implantação. Limites não substituem relações.
+
+O posicionamento em grade é preferível quando o esquema o suporta. Posições livres são apropriadas para uma exceção delimitada, não para o planejamento de coordenadas no nível da prosa. Mantenha atores externos fora do limite do sistema quando isso for factualmente verdadeiro. Um limite é traçado como uma caixa preenchida ao redor de todos os seus membros; portanto, posicione-os como um único agrupamento compacto alinhado aos eixos (sem espaços vazios que permitam que um não-membro fique dentro da moldura preenchida) e mantenha todos os não-membros fora dessa caixa; `layout/boundary-encloses-non-member` relata um componente que a caixa engloba com qualidade de apresentação. O padrão mantém seu comportamento de aceitação existente.
+
+### Fluxo de trabalho
+
+As faixas expressam responsabilidade ou fase. As colunas `0..5` expressam
+progressão lógica. Inicie novos fluxos de trabalho no `readable-v2`; mantenha o `fixed-v1` apenas para
+compatibilidade com geometria legada. No `readable-v2`, os nós podem compartilhar um `(lane, col)`
+quando valores distintos de `yOffset` deixam espaço para seus retângulos completos, rótulos e
+rotas de conexão. Mantenha o caminho ideal monotônico, preserve os rótulos semânticos das arestas,
+e encaminhe novas tentativas e retornos de exceção para fora do corredor da pista principal.
+
+#### Reparo da janela de visualização do fluxo de trabalho
+
+Quando `viewer/viewport-overflow` incluir `workflowLanes`, inspecione os quadros renderizados mais altos
+e seu intervalo de nós antes de alterar a fonte. As medidas
+são em pixels CSS; o espaço acima/abaixo dos nós inclui títulos de faixas e roteamento, portanto,
+não se trata de um espaço removível. Os IDs dos quadros identificam os índices das faixas renderizadas.
+
+Execute `validate workflow <source.json> --layout-json` e combine esses quadros com
+as faixas e nós da fonte. Verifique se muitas etapas compartilham a última coluna lógica
+e usam valores grandes de `yOffset`. O Readable-v2 reserva espaço simétrico ao redor
+dos deslocamentos. Com uma pilha vertical na mesma coluna, uma tela implícita e sem
+marcadores absolutos de rota ou rótulo, ele mede cada faixa independentemente. Outros casos mantêm
+a geometria de altura compartilhada por compatibilidade; consulte o
+[contrato de medição de faixas](../renderers/workflow/README.md#readable-v2).
+
+Quando a propriedade da fonte e a geometria explícita permitirem, redistribua as etapas
+entre colunas lógicas e faixas significativas, mantendo o caminho principal monotônico.
+Preserve todos os nós, relações, rótulos e verificações semânticas necessários. Se a propriedade
+ou pinos absolutos impedirem o refluxo, relate essa restrição em vez de mesclar faixas
+ou mover pinos automaticamente. Valide o JSON alterado, gere um HTML novo,
+em seguida, execute novamente as verificações do navegador e inspecione a primeira tela; uma aprovação estática por si só
+não garante o ajuste à janela de visualização. Estas são orientações de correção, não coordenadas garantidas.
+
+### Sequência
+
+Os participantes são ordenados de acordo com sua função na conversa. As mensagens mantêm sua própria ordem vertical. Use as variantes return/async/security para transmitir significado, não apenas como decoração; a sequência não utiliza o Automatic Port Spread. As arestas `from`/`to` de um segmento devem permanecer a pelo menos 4px de distância de cada seta de mensagem (`message.y`): uma aresta alinhada com uma seta impede que o leitor identifique a qual fase a mensagem pertence e gera relatórios de qualidade `sequence/segment-message-border-run`. O padrão mantém seu comportamento de aceitação existente.
+
+Formato do primeiro rascunho: toda mensagem precisa de um `id`, `from`, `to`, `label` e um `y` inteiro de pelo menos 160. `from` e `to` devem ser participantes diferentes — mensagens para si mesmo não são suportadas (`sequence/self-message-unsupported`). Faixas de fase opcionais são `segments[]` com apenas `from`, `to` e `label` (sem `id` de segmento). Incorporar `pos`/`size` nos participantes falha na validação do esquema — a ordem por si só já os posiciona. Omita `meta.viewBox` para que a altura automática se ajuste à linha do tempo + legenda (faixa legível mínima de 327px) em vez de um limite mínimo fixo de 760px; assim, grupos de 2 a 3 participantes ficam abaixo do padrão de 920px quando os rótulos cabem (4 ou mais permanecem em 920px; rótulos longos ainda se alargam).
+
+### Fluxo de dados
+
+Os estágios expressam transformação ou custódia. As linhas separam fluxos paralelos. Atribua a cada fluxo um contrato de dados conciso ou um rótulo de movimento; escolha sua convenção visual usando os [padrões de criação de fluxo de dados](authoring-defaults.md#presentation-and-modes) exigidos.
+
+Esboço inicial: declare `stages[]` (cada um como um `{label}`), depois posicione cada nó com `stage` e `row` inteiros — não `pos`/`size`. Os fluxos são `flows[]` com `from`, `to` obrigatórios e `label` não vazio.
+
+Omita `meta.viewBox` para ajustar a largura da tela a todos os estágios e nós em qualquer perfil de qualidade,
+incluindo larguras explícitas dos nós. A largura usa o conteúdo + preenchimento à direita de 24px
+com um mínimo de 480px (cinco estágios padrão ainda precisam de ~1068); o estouro na borda esquerda
+ainda requer um ajuste nos nós. Um viewBox definido pelo autor permanece fixo. O crescimento dos nós, a tipografia legível, a altura do conteúdo, as pontes de porta
+e o posicionamento delimitado de rótulos se aplicam apenas quando a tela e todas as larguras dos nós são
+omitidas. `--quality` substitui `meta.quality_profile`; sem ele, o renderizador
+usa `ARCHIFY_QUALITY_PROFILE` quando definido; caso contrário, o perfil JSON.
+
+### ERD
+
+Trate um ERD de esquema tanto como um catálogo de tabelas quanto como um mapa de relações. Se o
+esquema tiver mais de 8 tabelas ou 50 campos, trata-se de um mapa completo e denso do esquema: comece
+com `meta.quality_profile: “standard”` para que a visibilidade completa dos campos não seja
+sacrificada em troca de reparos repetidos na rota de exibição. Inclua todas as colunas físicas em
+`attributes`, mantenha o tipo SQL de origem e preserve o
+comentário em chinês do campo na string de tipo como `SQL_TYPE｜中文备注`, pois o
+esquema não possui uma propriedade de comentário separada. O visualizador padrão exibe essas linhas no
+nível `read`; não confie no hover/foco ou nos cartões para revelar campos físicos.
+Os cartões podem explicar restrições, relações inferidas ou regras de domínio, mas nunca
+substituem uma lista de campos.
+
+Antes de posicionar as caixas, classifique as tabelas em domínios funcionais usando nomes de tabela
+verificados, comentários, caminhos de módulos e o significado das chaves estrangeiras. Coloque o nome do domínio em
+`tag` e atribua a cada domínio um retângulo sólido de células da grade: uma única linha, uma
+única coluna ou um bloco retangular preenchido — não um L ou uma diagonal — com
+cada célula do retângulo contendo uma de suas tabelas.
+Todas as tabelas com a mesma tag permanecem juntas; não intercale tabelas não relacionadas
+entre os membros. Um domínio que preencha um desses retângulos é desenhado como uma faixa rotulada
+atrás de suas tabelas, de modo que o
+agrupamento fique visível sem a necessidade de ler cada caixa;
+uma tag cujas tabelas não preencham um retângulo não recebe nenhuma faixa e, como a faixa
+é o único local onde o nome do domínio é desenhado, o renderizador reporta
+`erd/domain-not-drawn` em vez de publicar um diagrama que não consiga nomear o
+domínio. Coordenadas absolutas
+não têm nenhuma célula da grade, portanto, uma tabela marcada sempre precisa de `row`/`col`.
+Ordene as tabelas pai/principais
+em direção ao limite compartilhado e
+coloque seus filhos diretos ao lado ou abaixo delas. As colunas são lidas da esquerda para a direita e
+as linhas, de cima para baixo; portanto, uma relação entre colunas vizinhas é um
+corredor reto. Nunca coloque uma entidade não relacionada entre duas âncoras alinhadas;
+o roteador pode contorná-la, mas o corredor livre é mais curto e facilita a
+leitura. Uma tabela de junção tem dois pais: coloque-a em uma célula ao lado ou entre
+ambos, não abaixo de um deles com tabelas empilhadas entre ela e a outra,
+e mantenha todas as tabelas que compartilham sua tag de domínio em um retângulo contínuo de células. Uma relação deve conectar duas entidades diferentes; uma autorreferência, como `manager_id`, permanece como uma coluna de chave estrangeira (e, opcionalmente, um cartão), não como uma aresta `employees`→`employees`.
+Use `row`/`col` para esse layout agrupado padrão e só use explicitamente
+`pos`/`via` depois que um diagnóstico identificar um problema geométrico concreto.
+
+Indique cada função-chave que uma coluna desempenha em `key` e as referências reais em
+`references`. Uma coluna costuma desempenhar mais de uma função ao mesmo tempo — o
+`tenant_id` de uma tabela de junção, por exemplo, faz parte tanto da chave primária quanto de uma chave estrangeira para `tenant.id` — portanto,
+`key` aceita um papel ou uma lista (`[“pk”, “fk”]`), e excluir um papel representa uma restrição menor
+do que a definida no esquema.
+Um par muitos-para-muitos é um fato real do modelo; portanto, declare-o e identifique a tabela de junção
+quando houver uma. Uma relação tem duas extremidades e cada uma declara seu próprio
+máximo; assim, uma chave estrangeira `muitos`-para-`um` precisa tanto de `fromCardinality` quanto de
+`toCardinality`; `fromOptional`/`toOptional` apenas reduz o mínimo dessa mesma extremidade
+de um para zero (uma extremidade opcional `one` significa zero ou um, uma extremidade opcional `many`
+significa zero ou muitos), e `identifying: false` desenha a linha tracejada não identificadora
+e é responsável por esse traço — o esquema rejeita uma `variant` que desenharia a
+relação contínua ao lado dela. A base se abre na direção da entidade que descreve, de modo que o
+glifo desenhado indica o máximo da extremidade, não uma direção de deslocamento.
+
+Um lado da tabela tem espaço limitado para um determinado número de extremidades: as portas se espalham, no máximo, a uma distância de `(extensão do lado
+- 32) / (extremidades - 1)`, e um glifo de cardinalidade tem 14 unidades de altura. Se houver
+mais extremidades de relação do que esse espaço permite, use `layout/marker-capacity`, que identifica
+a tabela, o lado e as saídas — adicione campos para que o lado fique mais alto, espalhe
+as relações ou reduza o número de entradas. Nunca corrija isso ocultando a cardinalidade.
+
+Atribua uma coluna para cada domínio quando o modelo precisar ser visualizado inteiramente dentro da
+janela de visualização de um laptop. O Reader dimensiona uma tela larga até a largura do leitor e
+estreita uma tela alta até que a página inteira caiba; assim, as mesmas onze tabelas ocupam o mesmo
+espaço de texto quando empilhadas como quatro domínios horizontais em vez de quatro verticais. Deixe um bloco inteiro da grade livre onde uma relação longa precise atravessar
+um domínio: um trecho que atravessa uma célula ocupada força um desvio, e um desvio abaixo do
+piso interior é uma falha de `composition/short-interior-segment`.
+
+Uma tela automática é dimensionada de forma que a legenda padrão esteja sempre no conteúdo gerado,
+e uma tela que o autor define com `meta.viewBox` informa sua capacidade de legenda
+em vez de omitir a chave; consulte
+[`../renderers/erd/README.md`](../renderers/erd/README.md) para o contrato de banda, porta e
+leitor.
+
+### Árvore
+
+Uma árvore responde à pergunta “como isso é decomposto?”: uma raiz, e todos os outros nós nomeiam
+exatamente um `pai`. Links significam apenas contenção; não use uma árvore para chamadas,
+movimentação de dados ou dependências entre ramos. Nada é inferido: um
+pai ausente (`tree/missing-parent`), zero ou várias raízes (`tree/root-count`), um
+ciclo de pais (`tree/cycle`, que também abrange todos os nós presos abaixo dele)
+e IDs duplicados são rejeitados. Os filhos são lidos na ordem de declaração.
+
+Use `layout.direction: “down”` (padrão) para uma divisão rasa e equilibrada e
+`“right”` para uma árvore profunda ou com muitas folhas, como um layout de repositório; uma árvore
+para a direita alinha cada pai com seu primeiro filho e rola verticalmente no
+visualizador. Os rótulos quebram entre as palavras. `collapsed: true` faz com que um ramo comece
+colapsado no Visualizador; isso nunca remove conteúdo do artefato, e toda
+exportação é a árvore completa. Para uma base de código real, ancore cada nó no
+caminho observado e anexe `sources`. Consulte
+[`../renderers/tree/README.md`](../renderers/tree/README.md).
+
+### Classe
+
+Um diagrama de classes explica os contratos dentro de um módulo: quais tipos existem,
+quais membros são relevantes para a explicação e como os tipos se relacionam. Escolha os
+membros necessários para a questão; um tipo pode não apresentar nenhum. Cada tipo indica seu `kind`
+(`class`, `abstract`, `interface`, `enum`, `record`); todos os tipos, exceto `class`,
+desenham sua palavra-chave UML, de modo que uma interface nunca é interpretada como uma classe vazia. Para uma
+base de código real, fundamentem cada tipo, membro e relação em evidências do repositório e
+anexem `fontes`.
+
+Cada relação é representada como `de` -> `para` e seu `tipo` determina a notação:
+`dependência` (`de` usa `para`, seta aberta tracejada), `associação` (`de` contém um
+`para`, seta aberta contínua), `herança` (`de` estende `para`, triângulo oco
+contínuo), `realização` (`de` implementa a interface `para`, triângulo oco
+traçado), `composição` e `agregação` (`de` é o todo, losango preenchido ou
+oco em `de`). A realização deve ter como alvo uma interface a partir de um
+elemento que não seja uma interface; a herança não deve ultrapassar o limite da interface; um
+ciclo de herança é rejeitado.
+
+Posicione os tipos na grade `row`/`col` com os supertipos acima de seus subtipos. Duas
+ou mais generalizações automáticas em um supertipo devem ser desenhadas como um único barramento de hierarquia
+com um único triângulo. Os membros nunca são truncados: um tipo se expande até seu membro mais largo
+até `layout.typeMaxW` e membros mais longos quebram nos limites dos parâmetros.
+Consulte [`../renderers/class/README.md`](../renderers/class/README.md).
+
+Estrutura da primeira versão: os tipos usam `row`/`col` (não `pos`/`size`), os campos ficam em
+`attributes[]`, as operações em `methods[]` com `parameters` como uma única string, como
+`“msg: Message”` (não um array de objetos). Os membros da enumeração são atributos com apenas
+`name`. As relações precisam de um `id`, `from`, `to` e `kind`.
+
+### Linha do tempo
+
+Uma linha do tempo responde a “quando o quê aconteceu e com que intervalo?”. Cada evento
+precisa de um `at` conforme a norma ISO 8601 com um deslocamento explícito `Z` ou `±HH:MM`; um carimbo de data/hora
+sem esse deslocamento é rejeitado, em vez de ser estimado. `meta.timezone` (IANA, padrão
+`UTC`) é o relógio de exibição para ticks e rótulos, e a legenda do eixo indica
+isso. `meta.evidence` é obrigatório: `observed` para eventos registrados (logs, histórico do Git,
+registros do pager) e `illustrative` para informações explicativas. Nunca marque
+horários inventados ou aproximados como “observados” e nunca preencha lacunas com eventos que
+a entrada não contenha.
+
+Use `lanes` para fontes ou categorias (lançamento, monitoramento, resposta); cada
+evento, então, indica uma delas. O texto visível de cada evento é `title` (não `label`). `kind`
+(`default`, `change`, `alert`, `action`, `recovery`) apenas
+colora o cartão; inventar valores como `milestone` falha na validação do esquema. Os eventos são desenhados em ordem cronológica, independentemente da ordem de criação;
+eventos simultâneos e próximos são empilhados. Por padrão, um período de inatividade maior que 8×
+o intervalo mediano e 10% do intervalo total é desenhado como uma quebra de largura fixa rotulada
+com a duração omitida; `layout.breaks: “none”` mantém um eixo proporcional.
+Consulte [`../renderers/timeline/README.md`](../renderers/timeline/README.md).
+
+### Cascata
+
+Uma cascata responde à pergunta “para onde foi o tempo?” para uma solicitação, tarefa ou execução de agente.
+Cada intervalo possui `id`, `name`, `start` e `end` ou `duration` em
+`meta.unit` (`us`, `ms`, `s`; padrão `ms`), além de `parent`, `status`,
+`service` e `detail` opcionais. A posição e o comprimento da barra são determinados exclusivamente por esses números.
+`meta.evidence` é obrigatório: `measured` apenas para tempos registrados (exportação de rastreamento,
+logs, profiler, execução cronometrada); caso contrário, `illustrative`. Nunca infira uma duração
+a partir da estrutura do código e nunca apresente números estimados como se fossem medidos.
+
+Um intervalo sem fim registrado deve ter `status: “incomplete”`; ele é desenhado como um
+limite inferior aberto até o último instante registrado. Fins/durações contraditórias,
+um fim antes do início, um pai ausente ou um ciclo pai são rejeitados.
+As porcentagens são sempre “do total do relógio de parede”; as durações de pai e filho
+são inclusivas e nunca somadas. Não marque um caminho crítico ou tempo de espera
+a menos que a entrada indique a dependência. Consulte
+[`../renderers/waterfall/README.md`](../renderers/waterfall/README.md).
+
+### Ciclo de vida
+
+O Esquema v3 é o único contrato de ciclo de vida. `mainPath` lista o caminho normal a partir
+do estado inicial; cada par consecutivo precisa de uma transição. O renderizador é responsável por
+toda a geometria: o caminho principal é uma linha, as transições de volta a uma fase anterior
+(ou avanços para a frente) tornam-se arcos acima dele, e todos os outros estados ficam abaixo do
+estado do qual se ramificam, uma linha mais profunda a cada passo de distância do caminho principal.
+Saídas equivalentes compartilham uma única seta somente quando seus rótulos, notas e variantes
+coincidirem e exatamente um grupo de, no mínimo, duas fases do caminho principal se qualificar para
+esse destino. Fases consecutivas recebem um quadro composto; fases não consecutivas
+compartilham um barramento. Outras saídas permanecem separadas, incluindo notas distintas em
+suas transições originais. Não remova nem copie notas para forçar o compartilhamento.
+Não há faixas, colunas, tamanhos ou controles de roteamento. As tentativas de layout mantêm
+o espaçamento mínimo do texto da transição e param de ampliar a linha do caminho principal quando sua
+largura mínima excederia o limite original de legibilidade do texto; as verificações finais
+de largura e espaçamento entre rótulos ainda se aplicam.
+
+Mantenha o caminho principal para as fases que o leitor segue com, no máximo, cerca de seis estados,
+e mantenha os rótulos de transição curtos. Uma falha recuperável requer uma transição real
+de volta a um estado ativo; um cartão com a palavra “retry” não constitui topologia.
+
+Escolha o `tipo` de cada estado com base no que o leitor deve perceber, já que a cor e o
+símbolo no canto seguem esse tipo: `espera` para uma pausa relacionada a uma pessoa, tempo ou entrada;
+`decisão` para uma revisão ou ponto de ramificação; `sucesso` ou `falha` para um resultado bom ou
+ruim; `neutro` para estados em espera e resultados que não sejam nem um nem outro;
+`externo` quando uma parte externa detém o trabalho; `ativo` nos demais casos. A partir de um
+`stateDiagram` do Mermaid, `[*] -->` nomeia o primeiro estado do `mainPath`, um estado
+com `--> [*]` é um resultado (`sucesso`, `fracasso` ou `neutro`; é desenhado como
+final quando não possui outra transição de saída), e `<<choice>>` torna-se um
+estado de `decisão`. Descomponha um `estado X { ... }` composto em seus estados internos
+e repita sua saída de cada um deles com um único rótulo; fases consecutivas do caminho principal
+que compartilham essa saída são enquadradas automaticamente. Regiões simultâneas (`--`)
+não têm forma de ciclo de vida: desenhe um ciclo de vida por região.
+
+## Evidências do repositório
+
+Quando o diagrama precisar refletir o código real, verifique os pontos de entrada do repositório,
+os limites de tempo de execução, o armazenamento, os transportes e a configuração de implantação antes
+da elaboração. Registre apenas as evidências que você realmente verificou. `--repo-root <caminho>` é
+aceito por `render`, `validate`, `deliver` e `preview` para todos os tipos de diagrama,
+por `compare` de arquitetura e por `migrate` de fluxo de trabalho; todos os modos verificam `meta.repository` e
+o nó `sources` da mesma maneira. A migração de um fluxo de trabalho baseado em fonte requer o mesmo
+`--repo-root` para que seu candidato seja verificado antes de substituir o destino.
+Nunca infira causalidade de tempo de execução apenas pela proximidade dos arquivos
+ou pela nomenclatura.
+
+Declare `meta.repository.url` e uma `revisão` completa de 40 caracteres; em seguida, anexe
+`sources` à coleção de nós do modo (Arquitetura `components[]`, Fluxo de Trabalho
+e Fluxo de Dados `nodes[]`, Sequência `participants[]`, Ciclo de Vida `states[]`) com
+`path` relativo ao repositório, `line`, `end_line` e `label` opcionais.
+A verificação lê blobs naquele commit, independentemente das edições na árvore de trabalho.
+A verificação ignora referências de substituição locais do Git, incluindo aquelas selecionadas por
+`GIT_REPLACE_REF_BASE`, e sempre lê os objetos originais no SHA fixado.
+Ela não altera a configuração do repositório nem exclui referências de substituição.
+Uma origem local correspondente, um commit disponível, um caminho delimitado,
+um blob e um intervalo de linhas válido são necessários em todos os modos de link. A verificação é
+local e não faz solicitações remotas; ela não estabelece disponibilidade pública
+nem os direitos de acesso do leitor atual.
+
+O `link_mode` tem como padrão `web`. As URLs de repositórios HTTPS do GitHub, Gitee e GitLab
+geram links fixados por revisão; os hosts públicos github.com, gitee.com e
+gitlab.com selecionam o provedor automaticamente. Os valores opcionais `provider: “github”`,
+`“gitee”` ou `“gitlab”` devem corresponder a um host público. Um host GitLab autogerenciado
+declara `provider: “gitlab”`; o Archify nunca entra em contato com o host para detectar
+seu forge. As declarações existentes do GitHub e os campos padrão de confirmação de entrega
+permanecem compatíveis.
+
+URLs do GitLab podem nomear grupos aninhados (`grupo/subgrupo/projeto`). Links de fonte usam
+`<url>/-/blob/<revisão>/<caminho>#L<linha>-<fim_da_linha>` e o link do repositório
+usa `<url>/-/tree/<revisão>`. Uma fonte Markdown (`.md`, `.markdown`) com um
+intervalo de linhas vincula-se à visualização simples (`?plain=1`), de modo que as linhas citadas sejam
+destacadas em vez do documento renderizado. Os caminhos dos repositórios do GitLab são comparados
+sem distinção entre maiúsculas e minúsculas, assim como no GitHub.
+
+```json
+{
+  “url”: “https://gitee.com/team/service”,
+  “revision”: “0123456789abcdef0123456789abcdef01234567”,
+  “provider”: “gitee”
+}
+```
+
+```json
+{
+  “url”: “https://git.example.com/platform/payments/service”,
+  “revision”: “0123456789abcdef0123456789abcdef01234567”,
+  “provider”: “gitlab”
+}
+```
+
+Para uma plataforma interna ou não suportada, selecione `link_mode: “local-only”`. O
+Visualizador mantém marcadores SRC, caminhos de arquivos pesquisáveis, intervalos de linhas e rótulos de revisão
+sem hiperlinks para o repositório ou a fonte. O comprovante de evidência adiciona
+`linkMode: “local-only”`. O campo `url` continua sendo obrigatório como identidade de origem esperada;
+a opção “local-only” desativa os links, não a verificação de identidade. Um repositório sem uma
+origem não é compatível.
+
+```json
+{
+  “url”: “http://git.internal:3000/Platform/Services/service”,
+  “revision”: “0123456789abcdef0123456789abcdef01234567”,
+  “link_mode”: “local-only”
+}
+```
+
+A opção “local-only” aceita endereços HTTP(S), `git@host:path` e `ssh://git@host[:port]/path`,
+incluindo namespaces aninhados. Declare um endereço sem credenciais;
+as credenciais HTTP(S) na origem do checkout são ignoradas para fins de identificação e
+suprimidas dos diagnósticos. A comparação de nomes de host não diferencia maiúsculas de minúsculas; os caminhos dos repositórios
+mantêm a distinção entre maiúsculas e minúsculas, exceto no GitHub e no GitLab. Uma barra final
+é normalizada e removida. Apenas o GitHub, o Gitee e o GitLab (gitlab.com ou um host declarado
+com `provider: “gitlab”`) normalizam um `.git` terminal e mapeiam o padrão
+HTTPS/443 para Git SSH/22 no mesmo host; um endpoint SSH do GitLab em outro host
+ou porta não é inferido. Para outros hosts, use o endereço de clonagem real:
+o transporte, a porta, o sufixo `.git` e os caminhos relativos ao remoto versus absolutos devem
+coincidir. Por exemplo, `git@host:Team/repo` difere de
+`ssh://git@host/Team/repo`; `git@host:/Team/repo` corresponde ao último. Caminhos no estilo SCP
+preservam os caracteres de escape de porcentagem literais, enquanto caminhos URI os decodificam. Aliases de host SSH
+e prefixos de navegação/clonagem específicos do Forge não são adivinhados.
+Links da web do Gitea/Forgejo/Bitbucket não estão implementados nesta versão;
+use apenas links locais até que um provedor de links testado esteja disponível. Provedores de web desconhecidos
+apresentam falha com um diagnóstico, em vez de gerar um link adivinhado.
+
+## Fallback definido manualmente
+
+Utilize apenas quando nenhum renderizador puder ser executado. Comece pelo arquivo `assets/template.html`, mantenha as classes CSS semânticas, preserve a estrutura SVG/acessibilidade embutida e execute a lista de verificação visual de entrega. Nunca introduza cores literais embutidas que quebrem a paridade entre os temas escuro e claro.
+
+## Ícones de nós
+
+Para diagramas específicos de domínio, defina um `icon` opcional nos componentes de arquitetura,
+nos nós de fluxo de trabalho/fluxo de dados, nos participantes de sequência ou nos estados do ciclo de vida. Escolha
+`calendar`, `clock`, `person`, `briefcase`, `flag` ou `moon` para conceitos cotidianos;
+o catálogo completo (incluindo símbolos técnicos e de ciclo de vida existentes) está em
+`common.schema.json#/$defs/nodeIcon`. Use `icon: “none”` para ocultar o símbolo de canto.
+A omissão de `icon` mantém o padrão baseado no tipo; os estados de ciclo de vida `start`, `active` e
+`neutral` têm como padrão a ausência de símbolo. Esses símbolos SVG embutidos são
+de propriedade do renderizador e são exportados com o diagrama; URLs e SVG bruto não são aceitos.
+
+A seleção do ícone altera apenas o símbolo do canto. O tipo do nó ainda determina
+a cor e o agrupamento semântico; as marcas de identidade permanecem independentes. Para um
+fluxo de trabalho de férias, combine `type: “backend”, icon: “calendar”` com
+`meta.legend.entries.backend.label: “假期”` e use `icon: “briefcase”` mais
+um rótulo de legenda apropriado para trabalho de reposição. Mantenha o rótulo do nó significativo:
+os ícones são decorativos e ficam ocultos para tecnologias assistivas.
+
+Consulte [planejamento de feriados](../examples/holiday-planning.workflow.json) para ver um exemplo completo de fluxo de trabalho.
