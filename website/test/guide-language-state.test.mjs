@@ -37,7 +37,15 @@ function page({ language = 'en', href = 'https://archify.si/guide', target = 'ht
     removeItem(name) { if (denyStorage) throw new Error('blocked'); storage.delete(name); },
   };
   vm.runInNewContext(script, { document, sessionStorage, window: { location: { href } },
-    URL, ArchifySiteLanguage: { read() { return language; }, write() { return language; }, page(name, suffix) { return name + (suffix || ''); } },
+    URL, ArchifySiteLanguage: {
+      read() { return language; }, write() { return language; },
+      content() { return language === 'zh' ? 'zh' : 'en'; },
+      resolve(values) { return values && (values[language] || values.en); },
+      value(values, key) { return values && (values[language]?.[key] ?? values.en?.[key]); },
+      dictionary(values) { return Object.assign({}, values?.en || {}, values?.[language] || {}); },
+      text(node) { return language === 'zh' ? node.getAttribute('data-zh') : node.getAttribute('data-en'); },
+      page(name, suffix) { return name + (suffix || ''); },
+    },
   });
   return { element, storage };
 }

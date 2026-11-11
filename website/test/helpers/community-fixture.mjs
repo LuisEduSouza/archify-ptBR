@@ -4,6 +4,7 @@ import os from 'node:os';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { PUBLISHED_CASES } from '../../src/data/published-cases.mjs';
+import { sitePages, siteRoutedLocales } from '../../src/data/site-urls.mjs';
 
 export const websiteRoot = fileURLToPath(new URL('../../', import.meta.url));
 const repoRoot = path.resolve(websiteRoot, '..');
@@ -30,6 +31,13 @@ export function createCommunityFixture() {
     'docs/gallery/', 'docs/assets/', ...PUBLISHED_CASES.flatMap(entry => [`docs/${entry.artifact}`, `docs/${entry.input}`])], { cwd: repoRoot, encoding: 'utf8' })
     .split('\0').filter(Boolean);
   for (const relative of tracked) copy(relative);
+  for (const locale of siteRoutedLocales) {
+    for (const page of sitePages) {
+      const route = page === 'index' ? `${locale}/index.astro` : `${locale}/${page}.astro`;
+      const relative = `website/src/pages/${route}`;
+      if (fs.existsSync(path.join(repoRoot, relative)) && !tracked.includes(relative)) copy(relative);
+    }
+  }
   fs.symlinkSync(path.join(websiteRoot, 'node_modules'), path.join(root, 'website/node_modules'), process.platform === 'win32' ? 'junction' : 'dir');
   const publicRoot = path.join(root, 'website/.public');
   fs.mkdirSync(publicRoot, { recursive: true });

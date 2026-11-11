@@ -1,4 +1,4 @@
-import { canonicalUrl, canonicalOrigin } from './site-urls.mjs';
+import { canonicalUrl, canonicalOrigin, contentLocaleFor } from './site-urls.mjs';
 const descriptions = {
   'cases/mco-runtime': {
     en: ['Archify MCO Runtime Case — Source-backed Architecture', 'Follow pinned MCO source to distinguish provider-output decoding, streamed answer writes and retained artifacts. Read the existing Archify diagram with explicit evidence limits.'],
@@ -30,13 +30,14 @@ const descriptions = {
   },
 };
 export function pageMetadata(page, lang, version) {
-  const [title, description] = descriptions[page][lang];
+  const contentLang = contentLocaleFor(lang);
+  const [title, description] = descriptions[page][contentLang];
   const canonical = canonicalUrl(page, lang);
   return { title, description, canonical, image: `${canonicalOrigin}/assets/archify-social-preview.png`,
     schema: { '@context': 'https://schema.org', '@graph': [
       { '@type': 'WebSite', '@id': `${canonicalOrigin}/#website`, url: `${canonicalOrigin}/`, name: 'Archify', inLanguage: ['en', 'zh-Hans'] },
-      { '@type': 'SoftwareSourceCode', '@id': `${canonicalOrigin}/#source`, name: 'Archify', codeRepository: 'https://github.com/tt-a1i/archify', url: 'https://github.com/tt-a1i/archify', license: 'https://github.com/tt-a1i/archify/blob/main/LICENSE', version, programmingLanguage: 'JavaScript', description: descriptions.index[lang][1] },
-      ...(['agent-diagrams', 'cases/mco-runtime'].includes(page) ? [{ '@type': 'TechArticle', '@id': `${canonical}#article`, url: canonical, headline: title, description, inLanguage: lang === 'zh' ? 'zh-Hans' : 'en', isPartOf: { '@id': `${canonicalOrigin}/#website` }, about: { '@id': `${canonicalOrigin}/#source` } }] : []),
+      { '@type': 'SoftwareSourceCode', '@id': `${canonicalOrigin}/#source`, name: 'Archify', codeRepository: 'https://github.com/tt-a1i/archify', url: 'https://github.com/tt-a1i/archify', license: 'https://github.com/tt-a1i/archify/blob/main/LICENSE', version, programmingLanguage: 'JavaScript', description: descriptions.index[contentLang][1] },
+      ...(['agent-diagrams', 'cases/mco-runtime'].includes(page) ? [{ '@type': 'TechArticle', '@id': `${canonical}#article`, url: canonical, headline: title, description, inLanguage: contentLang === 'zh' ? 'zh-Hans' : 'en', isPartOf: { '@id': `${canonicalOrigin}/#website` }, about: { '@id': `${canonicalOrigin}/#source` } }] : []),
     ] },
   };
 }

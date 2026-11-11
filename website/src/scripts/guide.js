@@ -40,8 +40,8 @@
         } catch (_) {}
       }
 
-      function t(key) { return copy[language][key]; }
-      function local(recipe) { return Object.assign({}, recipe, recipe[language]); }
+      function t(key) { return ArchifySiteLanguage.value(copy, key); }
+      function local(recipe) { return Object.assign({}, recipe, ArchifySiteLanguage.dictionary(recipe)); }
       function normalize(value) { return String(value || '').normalize('NFKC').toLowerCase().replace(/[\s_]+/g,' ').trim(); }
       function rank(query) {
         var text = normalize(query);
@@ -62,7 +62,7 @@
       }
       function renderFilters() {
         var labels = {"en":{"architecture":"Architecture","workflow":"Workflow","sequence":"Sequence","dataflow":"Data flow","lifecycle":"Lifecycle","erd":"Entity-relationship"},"zh":{"architecture":"架构图","workflow":"工作流","sequence":"时序图","dataflow":"数据流","lifecycle":"生命周期","erd":"实体关系图"}};
-        document.getElementById('filters').innerHTML = ['all'].concat(types).map(function (type) { return '<button class="filter '+(activeType === type ? 'active':'')+'" type="button" aria-pressed="'+(activeType === type)+'" data-filter="'+type+'">'+escapeHtml(type === 'all' ? t('all') : labels[language][type])+'</button>'; }).join('');
+        document.getElementById('filters').innerHTML = ['all'].concat(types).map(function (type) { return '<button class="filter '+(activeType === type ? 'active':'')+'" type="button" aria-pressed="'+(activeType === type)+'" data-filter="'+type+'">'+escapeHtml(type === 'all' ? t('all') : ArchifySiteLanguage.dictionary(labels)[type])+'</button>'; }).join('');
       }
       function updateFilters() {
         document.querySelectorAll('[data-filter]').forEach(function (filter) {
@@ -101,7 +101,10 @@
         document.documentElement.lang = language === 'zh' ? 'zh-Hans' : 'en';
         document.getElementById('language').textContent = language === 'zh' ? 'EN' : '中文';
         document.getElementById('language').setAttribute('aria-label', language === 'zh' ? 'Switch to English' : '切换到中文');
-        document.querySelectorAll('[data-en][data-zh]').forEach(function (node) { node.textContent=node.getAttribute(language === 'zh' ? 'data-zh' : 'data-en'); });
+        document.querySelectorAll('[data-en][data-zh], [data-pt-br]').forEach(function (node) {
+          var text = ArchifySiteLanguage.text(node);
+          if (text !== null) node.textContent = text;
+        });
         document.querySelectorAll('[data-i18n]').forEach(function (node) { node.textContent=t(node.dataset.i18n); });
         document.querySelectorAll('[data-i18n-html]').forEach(function (node) { node.innerHTML=t(node.dataset.i18nHtml); });
         document.querySelectorAll('[data-i18n-placeholder]').forEach(function (node) { node.placeholder=t(node.dataset.i18nPlaceholder); });

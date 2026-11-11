@@ -270,5 +270,6 @@ export function indexCopyFor(channel) {
   return {
     en: { ...indexCopy.en, 'hero-badge': "Stable Agent Skill · see what's new", 'footer-meta': indexCopy.en['footer-meta'].replace('development', 'stable') },
     zh: { ...indexCopy.zh, 'hero-badge': '稳定版 Agent 技能 · 查看更新', 'footer-meta': indexCopy.zh['footer-meta'].replace('开发版', '稳定版') },
+    'pt-BR': { ...indexCopy['pt-BR'] },
   };
 }

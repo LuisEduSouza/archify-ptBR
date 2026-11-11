@@ -1,5 +1,5 @@
 import { parseFragment, serialize } from 'parse5';
-import { localPagePath } from './site-urls.mjs';
+import { contentLocaleFor, localPagePath } from './site-urls.mjs';
 
 export function localizeHtml(html, { lang, page, cloudflare, copy = {} }) {
   const tree = parseFragment(html);
@@ -15,20 +15,26 @@ export function localizeHtml(html, { lang, page, cloudflare, copy = {} }) {
       return;
     }
     const key = get('data-i18n') || get('data-i18n-html');
-    const value = key ? copy[lang]?.[key] : get(`data-${lang}`);
+    const contentLang = contentLocaleFor(lang);
+    const value = key
+      ? copy[lang]?.[key] ?? copy[contentLang]?.[key] ?? copy.en?.[key]
+      : (lang === 'pt-BR' ? get('data-pt-br') : undefined) ?? get(`data-${contentLang}`);
     if (typeof value === 'string') {
       // Only authored dictionary strings or explicit markup may contain HTML.
       const markup = key || get('data-translation-html') !== undefined || page === 'gallery';
       node.childNodes = markup ? parseFragment(value).childNodes : [{ nodeName: '#text', value, parentNode: node }];
       for (const child of node.childNodes) child.parentNode = node;
     }
-    const placeholder = copy[lang]?.[get('data-i18n-placeholder')];
+    const placeholderKey = get('data-i18n-placeholder');
+    const placeholder = copy[lang]?.[placeholderKey] ?? copy[contentLocaleFor(lang)]?.[placeholderKey] ?? copy.en?.[placeholderKey];
     if (typeof placeholder === 'string') set('placeholder', placeholder);
     if (get('data-language-switch') !== undefined) {
       set('href', localPagePath(page, lang === 'zh' ? 'en' : 'zh', cloudflare));
       set('hreflang', lang === 'zh' ? 'en' : 'zh-Hans');
       set('aria-label', lang === 'zh' ? 'Switch to English' : '切换到中文');
       node.childNodes = [{ nodeName: '#text', value: lang === 'zh' ? 'EN' : '中文', parentNode: node }];
+    } else if (get('data-site-locale') === 'pt-BR') {
+      set('href', localPagePath(page, 'pt-BR', cloudflare));
     } else if (node.tagName === 'a') {
       const href = get('href');
       const match = href?.match(/^(?:(index|guide|start|gallery|community|agent-diagrams|cases\/mco-runtime)\.html|(\.\/))([?#].*)?$/);

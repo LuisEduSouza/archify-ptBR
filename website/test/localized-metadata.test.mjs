@@ -3,7 +3,7 @@ import assert from 'node:assert/strict';
 import fs from 'node:fs';
 import vm from 'node:vm';
 import { parse } from 'parse5';
-import { canonicalUrl, localPagePath, sitePages } from '../src/data/site-urls.mjs';
+import { canonicalUrl, localPagePath, sitePages, siteLocales, siteRoutedLocales } from '../src/data/site-urls.mjs';
 import { localizeHtml } from '../src/data/localize-html.mjs';
 import { pageMetadata } from '../src/data/site-metadata.mjs';
 import { defaultProofLabels } from '../src/data/default-proof-labels.mjs';
@@ -49,7 +49,7 @@ function runtime({ href, base, lang = 'en', page = 'start', cloudflare = false, 
   };
   const document = {
     documentElement: {}, baseURI: base,
-    getElementById() { return { textContent: JSON.stringify({ lang, page, cloudflare }) }; },
+    getElementById() { return { textContent: JSON.stringify({ lang, contentLang: lang === 'zh' ? 'zh' : 'en', page, cloudflare, locales: siteLocales, routedLocales: siteRoutedLocales }) }; },
     addEventListener(_event, callback) { ready = callback; },
     querySelectorAll(selector) { return selector === '[data-language-switch]' ? [switcher] : []; },
   };

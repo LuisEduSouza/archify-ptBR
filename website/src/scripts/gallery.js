@@ -9,8 +9,9 @@
       function applyLanguage(next) {
         language = ArchifySiteLanguage.write(next);
         document.documentElement.lang = language === 'zh' ? 'zh-Hans' : 'en';
-        document.querySelectorAll('[data-en][data-zh]').forEach(function (node) {
-          node.innerHTML = node.getAttribute(language === 'zh' ? 'data-zh' : 'data-en');
+        document.querySelectorAll('[data-en][data-zh], [data-pt-br]').forEach(function (node) {
+          var text = ArchifySiteLanguage.text(node);
+          if (text !== null) node.innerHTML = text;
         });
         var languageButton = document.getElementById('language');
         languageButton.textContent = language === 'zh' ? 'EN' : '中文';

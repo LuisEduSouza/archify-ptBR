@@ -6,12 +6,13 @@ import { version, versioned, jsonScript, guide } from '../data/site';
 import { indexCopyFor, guideCopyFor } from '../data/site-translations.mjs';
 import { defaultProofLabels } from '../data/default-proof-labels.mjs';
 import { productChannel } from '../data/product-facts';
-import { canonicalUrl } from '../data/site-urls.mjs';
+import { canonicalUrl, contentLocaleFor, siteLocales, siteRoutedLocales } from '../data/site-urls.mjs';
 import { pageMetadata } from '../data/site-metadata.mjs';
 import { localizeHtml } from '../data/localize-html.mjs';
-interface Props { head: string; css: string; page: 'index' | 'guide' | 'start' | 'gallery' | 'community' | 'agent-diagrams' | 'cases/mco-runtime'; lang?: 'en' | 'zh' }
+interface Props { head: string; css: string; page: 'index' | 'guide' | 'start' | 'gallery' | 'community' | 'agent-diagrams' | 'cases/mco-runtime'; lang?: 'en' | 'zh' | 'pt-BR' }
 const { head, css, page, lang = 'en' } = Astro.props;
-const pageDepth = page.split('/').length - 1 + (lang === 'zh' && page !== 'index' ? 1 : 0);
+const contentLang = contentLocaleFor(lang);
+const pageDepth = page.split('/').length - 1 + (lang !== 'en' && page !== 'index' ? 1 : 0);
 const rootBase = pageDepth ? '../'.repeat(pageDepth) : './';
 const cloudflare = Astro.site?.origin === 'https://archify.si';
 const metadata = pageMetadata(page, lang, version);
@@ -21,7 +22,7 @@ const body = localizeHtml(versioned(await Astro.slots.render('default')), { lang
 const resourceHead = head.replace(/<meta\b[^>]*>/gi, '').replace(/<title>[\s\S]*?<\/title>/gi, '').replace(/<link\b[^>]*rel=["'](?:canonical|alternate)["'][^>]*>/gi, '');
 ---
 <!DOCTYPE html>
-<html lang={lang === 'zh' ? 'zh-Hans' : 'en'}>
+<html lang={contentLang === 'zh' ? 'zh-Hans' : 'en'}>
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
@@ -47,7 +48,7 @@ const resourceHead = head.replace(/<meta\b[^>]*>/gi, '').replace(/<title>[\s\S]*
   <meta name="twitter:image" content={metadata.image} />
   <script is:inline type="application/ld+json" set:html={jsonScript(metadata.schema)}></script>
   <Fragment set:html={resourceHead} />
-  <script is:inline id="site-route" type="application/json" set:html={jsonScript({ page, lang, cloudflare })}></script>
+  <script is:inline id="site-route" type="application/json" set:html={jsonScript({ page, lang, contentLang, cloudflare, locales: siteLocales, routedLocales: siteRoutedLocales })}></script>
   <script is:inline id="site-copy" type="application/json" set:html={versioned(jsonScript(copy))}></script>
   {page === 'index' && <script is:inline id="site-proof-labels" type="application/json" set:html={jsonScript(defaultProofLabels)}></script>}
   <script is:inline set:html={languageScript}></script>

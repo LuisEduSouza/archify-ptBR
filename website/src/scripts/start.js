@@ -32,13 +32,14 @@
       var projectCommand = document.getElementById('project-command');
 
       function copyForElement(element) {
-        return language === 'zh' ? element.dataset.zh : element.dataset.en;
+        return ArchifySiteLanguage.text(element);
       }
 
       function updateStaticCopy() {
         document.documentElement.lang = language === 'zh' ? 'zh-Hans' : 'en';
-        document.querySelectorAll('[data-en][data-zh]').forEach(function (element) {
-          element.textContent = copyForElement(element);
+        document.querySelectorAll('[data-en][data-zh], [data-pt-br]').forEach(function (element) {
+          var text = copyForElement(element);
+          if (text !== null && text !== undefined) element.textContent = text;
         });
         languageButton.textContent = language === 'zh' ? 'EN' : '中文';
         languageButton.setAttribute('aria-label', language === 'zh' ? 'Switch to English' : '切换到中文');
@@ -83,8 +84,8 @@
 
       function currentPrompt() {
         return input === 'description'
-          ? DATA[type][language].descriptionPrompt
-          : DATA[type][language].repositoryPrompt;
+          ? ArchifySiteLanguage.dictionary(DATA[type]).descriptionPrompt
+          : ArchifySiteLanguage.dictionary(DATA[type]).repositoryPrompt;
       }
 
       var copyAttempt = 0;
@@ -92,7 +93,7 @@
         copyAttempt++;
         language = ArchifySiteLanguage.write(language);
         var recipe = DATA[type];
-        var copy = recipe[language];
+        var copy = ArchifySiteLanguage.dictionary(recipe);
         updateStaticCopy();
         document.querySelectorAll('[data-type]').forEach(function (button) {
           var active = button.dataset.type === type;

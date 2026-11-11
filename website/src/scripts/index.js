@@ -121,8 +121,8 @@
   }
 
   function caption(prefix, index, changed) {
-    $('beat-title').textContent = LANGS[lang][`${prefix}-${index}-t`];
-    $('beat-body').textContent = LANGS[lang][`${prefix}-${index}-b`];
+    $('beat-title').textContent = ArchifySiteLanguage.value(LANGS, `${prefix}-${index}-t`);
+    $('beat-body').textContent = ArchifySiteLanguage.value(LANGS, `${prefix}-${index}-b`);
     if (changed) { beatCard.classList.remove('is-swapping'); void beatCard.offsetWidth; beatCard.classList.add('is-swapping'); }
   }
 
@@ -155,14 +155,14 @@
       tab.hidden = !visible;
       tab.setAttribute('aria-selected', String(selected));
       tab.tabIndex = selected ? 0 : -1;
-      tab.querySelector('.spec-name').textContent = (tab.dataset.mode === 'page' ? PAGES : PROOFS)[tab.dataset.proof].name[lang];
+      tab.querySelector('.spec-name').textContent = ArchifySiteLanguage.resolve((tab.dataset.mode === 'page' ? PAGES : PROOFS)[tab.dataset.proof].name);
       if (selected && focus) tab.focus();
     });
     proofPanel.setAttribute('aria-labelledby', `proof-tab-${current}`);
     const entry = mode === 'map' ? PROOFS[activeProof] : PAGES[activePage];
     proofOpen.href = mode === 'map' ? `${entry.artifact}?present=1${entry.hash}` : entry.page;
-    proofMeta.textContent = entry.meta[lang];
-    proofTitle.textContent = entry.title[lang];
+    proofMeta.textContent = ArchifySiteLanguage.resolve(entry.meta);
+    proofTitle.textContent = ArchifySiteLanguage.resolve(entry.title);
     addressFile.textContent = (entry.artifact || entry.page).split('/').pop();
     pageFrame.title = lang === 'zh' ? `${PAGES[activePage].name.zh} Archify 一页式解答` : `${PAGES[activePage].name.en} live Archify one-page answer`;
     if (mode === 'map') renderBeat(beat, { apply: false }); else renderPageBeat(pageBeat);
@@ -172,7 +172,7 @@
     const proof = PROOFS[key];
     if (!proof) return;
     activeProof = key;
-    proofFrame.title = proof.iframeTitle[lang];
+    proofFrame.title = ArchifySiteLanguage.resolve(proof.iframeTitle);
     if (proofFrame.dataset.proof !== key) {
       proofStage.classList.add('is-loading');
       proofFrame.dataset.proof = key;
@@ -304,7 +304,7 @@
     document.documentElement.lang = lang === 'zh' ? 'zh-Hans' : 'en';
     btnLang.textContent = lang === 'zh' ? 'EN' : '中文';
     btnLang.setAttribute('aria-label', lang === 'zh' ? 'Switch to English' : '切换到中文');
-    const dict = LANGS[lang];
+    const dict = ArchifySiteLanguage.dictionary(LANGS);
     document.querySelectorAll('[data-i18n]').forEach(el => {
       const v = dict[el.dataset.i18n];
       if (v !== undefined) el.innerHTML = v;
@@ -419,8 +419,9 @@
       for (;;) {
         await sleep(2600);
         for (let n = ctaPrompt.textContent.length; n >= 0; n -= 2) { ctaPrompt.textContent = ctaPrompt.textContent.slice(0, n); await sleep(14); }
-        index = (index + 1) % PROMPTS[lang].length;
-        const next = PROMPTS[lang][index];
+        const prompts = ArchifySiteLanguage.dictionary(PROMPTS);
+        index = (index + 1) % prompts.length;
+        const next = prompts[index];
         for (let n = 1; n <= next.length; n++) { ctaPrompt.textContent = next.slice(0, n); await sleep(lang === 'zh' ? 70 : 32); }
       }
     }
@@ -500,7 +501,7 @@
       const isCurrent = () => current === attempt && (!button.dataset.copyFrom || revision === agentRevision) && text === sourceText();
       const ok = await ArchifyClipboard.copy(text, isCurrent);
       if (!isCurrent()) return;
-      status.textContent = LANGS[lang][ok ? 'copySuccess' : 'copyFailure'];
+      status.textContent = ArchifySiteLanguage.value(LANGS, ok ? 'copySuccess' : 'copyFailure');
     });
   });
 
