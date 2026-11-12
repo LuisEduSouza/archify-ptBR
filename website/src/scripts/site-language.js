@@ -29,7 +29,6 @@
   }
   function localizeLinks() {
     document.querySelectorAll('a[href]').forEach(function (link) {
-      if (link.hasAttribute('data-language-switch')) return;
       var match = link.getAttribute('href').match(/^(index|guide|start|gallery|community|agent-diagrams|cases\/mco-runtime)\.html([?#].*)?$/);
       if (match) link.setAttribute('href', pagePath(match[1], language) + (match[2] || ''));
     });
@@ -54,16 +53,10 @@
       return language;
     },
     page: function (page, suffix) { return pagePath(page, language) + (suffix || ''); },
+    pageFrom: function (locale) { return destination(locale).href; },
     localizeLinks: localizeLinks,
   });
   document.addEventListener('DOMContentLoaded', function () {
     localizeLinks();
-    document.querySelectorAll('[data-language-switch]').forEach(function (link) {
-      function sync() { link.href = destination(language === 'zh' ? 'en' : 'zh').href; }
-      sync();
-      link.addEventListener('pointerdown', sync);
-      link.addEventListener('focus', sync);
-      link.addEventListener('click', sync);
-    });
   });
 }(window));

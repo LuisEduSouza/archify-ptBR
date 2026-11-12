@@ -85,7 +85,6 @@
   let beat = 0;
   let pageBeat = 0;
   const $ = id => document.getElementById(id);
-  const btnLang = $('btn-lang');
   const proofStage = $('hero-proof-stage');
   const proofFrame = $('hero-proof-frame');
   const pageFrame = $('hero-page-frame');

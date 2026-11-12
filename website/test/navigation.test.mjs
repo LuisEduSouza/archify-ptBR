@@ -14,9 +14,9 @@ const origin = cloudflare ? 'https://archify.si/' : 'https://tt-a1i.github.io/ar
 const extension = cloudflare ? '' : '.html';
 
 test('all built pages expose one shared top navigation and the correct current page', () => {
-  for (const lang of ['en', 'zh']) for (const page of pages) {
-    const file = page === 'index' ? (lang === 'zh' ? 'zh.html' : 'index.html') : `${lang === 'zh' ? 'zh/' : ''}${page}.html`;
-    const hrefFor = target => `${origin}${lang === 'zh' ? 'zh/' : ''}${target}${extension}`;
+  for (const lang of ['en', 'zh', 'pt-BR']) for (const page of pages) {
+    const file = page === 'index' ? (lang === 'zh' ? 'zh.html' : lang === 'pt-BR' ? 'pt-BR.html' : 'index.html') : `${lang === 'zh' ? 'zh/' : lang === 'pt-BR' ? 'pt-BR/' : ''}${page}.html`;
+    const hrefFor = target => `${origin}${lang === 'zh' ? 'zh/' : lang === 'pt-BR' ? 'pt-BR/' : ''}${target}${extension}`;
     const dom = parse(fs.readFileSync(new URL(file, output), 'utf8'));
     const bases = nodes(dom).filter(node => node.tagName === 'base');
     assert.equal(bases.length, 1, file);
@@ -25,6 +25,14 @@ test('all built pages expose one shared top navigation and the correct current p
     const resolvedHref = node => new URL(attr(node, 'href'), baseUri).href;
     const nav = nodes(dom).find(node => node.tagName === 'nav' && hasClass(node, 'site-nav'));
     assert.ok(nav, page);
+    const toggle = nodes(nav).find(node => node.tagName === 'button' && attr(node, 'data-language-toggle') !== undefined);
+    assert.ok(toggle, `${file}: one language toggle`);
+    assert.equal(attr(toggle, 'aria-haspopup'), 'menu', file);
+    assert.equal(attr(toggle, 'aria-expanded'), 'false', file);
+    assert.equal(nodes(nav).filter(node => node.attrs?.some(item => item.name === 'id' && ['language', 'btn-lang'].includes(item.value))).length, 0, `${file}: legacy language controls are absent`);
+    const options = nodes(nav).filter(node => node.tagName === 'a' && attr(node, 'data-language-option'));
+    assert.deepEqual(options.map(node => attr(node, 'data-language-option')), ['en', 'zh', 'pt-BR'], file);
+    assert.equal(options.filter(node => attr(node, 'hidden') !== undefined).length, 1, file);
     const links = nodes(nav).filter(node => node.tagName === 'a' && hasClass(node, 'nav-link'));
     assert.deepEqual(links.map(resolvedHref), [
       ...['guide', 'gallery', 'start', 'community'].map(hrefFor), 'https://github.com/tt-a1i/archify',

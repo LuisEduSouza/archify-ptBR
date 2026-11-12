@@ -79,7 +79,10 @@ for (const page of pages) {
       // the baseline body must survive.
       const ids = node => [attr(node, 'id'), ...(node.childNodes || []).flatMap(ids)].filter(Boolean);
       const nextIds = new Set(ids(elements(next, 'body')[0]));
-      for (const id of ids(elements(old, 'body')[0])) assert.ok(nextIds.has(id), `${page}: #${id} must remain`);
+      for (const id of ids(elements(old, 'body')[0])) {
+        if (id === 'language' || id === 'btn-lang') continue; // Replaced by the unified accessible language menu.
+        assert.ok(nextIds.has(id), `${page}: #${id} must remain`);
+      }
     }
     assert.ok(!read(dist, page).includes('[[ARCHIFY_VERSION]]'));
   });

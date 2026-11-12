@@ -22,7 +22,7 @@ test('website locale registry recognizes pt-BR as a routed website locale', () =
 });
 
 test('pt-BR static localization falls back to English and preserves authored content for missing keys', () => {
-  const html = '<p data-i18n="known">Authored</p><p data-i18n="missing">Keep this</p><p data-en="English" data-zh="中文">Original</p><p data-en="English attribute" data-pt-br="Locale-specific">Original</p><p data-zh="中文 only">Keep original</p><input data-i18n-placeholder="hint"><a data-site-locale="pt-BR" href="pt-BR/">pt-BR</a>';
+  const html = '<p data-i18n="known">Authored</p><p data-i18n="missing">Keep this</p><p data-en="English" data-zh="中文">Original</p><p data-en="English attribute" data-pt-br="Locale-specific">Original</p><p data-zh="中文 only">Keep original</p><input data-i18n-placeholder="hint"><a data-language-option="pt-BR" href="pt-BR/">Português (Brasil)</a><a data-language-option="en" href="./">English</a>';
   const localized = localizeHtml(html, { page: 'guide', lang: 'pt-BR', cloudflare: true, copy: { en: { known: 'English copy', hint: 'English hint' }, zh: { known: '中文' } } });
   const document = parse(localized);
   const find = (node, tag) => node.tagName === tag ? node : (node.childNodes || []).map(child => find(child, tag)).find(Boolean);
@@ -32,13 +32,18 @@ test('pt-BR static localization falls back to English and preserves authored con
   walk(document);
   assert.deepEqual(paragraphs.map(node => node.childNodes.map(child => child.value || '').join('')), ['English copy', 'Keep this', 'English', 'Locale-specific', 'Keep original']);
   assert.equal(find(document, 'input').attrs.find(attr => attr.name === 'placeholder').value, 'English hint');
-  assert.equal(find(document, 'a').attrs.find(attr => attr.name === 'href').value, 'pt-BR/guide');
+  const options = [];
+  const collect = node => { if (node.tagName === 'a' && node.attrs.some(attr => attr.name === 'data-language-option')) options.push(node); for (const child of node.childNodes || []) collect(child); };
+  collect(document);
+  assert.equal(options[0].attrs.find(attr => attr.name === 'href').value, 'pt-BR/guide');
+  assert.equal(options[0].attrs.some(attr => attr.name === 'hidden'), true);
+  assert.equal(options[1].attrs.find(attr => attr.name === 'href').value, 'guide');
 });
 
 test('site language runtime recognizes pt-BR routes and reports English as the content fallback', () => {
   const source = fs.readFileSync(new URL('../src/scripts/site-language.js', import.meta.url), 'utf8');
   let ready, redirected;
-  const switcher = { href: '', addEventListener() {} };
+  const options = ['en', 'zh', 'pt-BR'].map(locale => ({ href: '', getAttribute(name) { return name === 'data-language-option' ? locale : null; }, addEventListener() {} }));
   const window = {
     location: { href: 'https://archify.si/guide?lang=pt-BR', replace(value) { redirected = value; } },
     history: { state: null, replaceState() {} },
@@ -48,14 +53,14 @@ test('site language runtime recognizes pt-BR routes and reports English as the c
     baseURI: 'https://archify.si/',
     getElementById() { return { textContent: JSON.stringify({ page: 'guide', lang: 'en', contentLang: 'en', cloudflare: true, locales: siteLocales, routedLocales: siteRoutedLocales }) }; },
     addEventListener(_event, callback) { ready = callback; },
-    querySelectorAll(selector) { return selector === '[data-language-switch]' ? [switcher] : []; },
+    querySelectorAll(selector) { return selector === '[data-language-option]' ? options : []; },
   };
   vm.runInNewContext(source, { window, document, URL });
   assert.equal(redirected, 'https://archify.si/pt-BR/guide');
   assert.equal(window.ArchifySiteLanguage.read(), 'en');
   assert.equal(window.ArchifySiteLanguage.content(), 'en');
   ready();
-  assert.equal(switcher.href, 'https://archify.si/zh/guide');
+  assert.equal(window.ArchifySiteLanguage.pageFrom('zh'), 'https://archify.si/zh/guide');
 
   const ptWindow = { location: { href: 'https://archify.si/pt-BR/guide' }, history: { state: null, replaceState() {} }, localStorage: { setItem() {} } };
   const ptDocument = {
@@ -99,9 +104,12 @@ test('built pt-BR routes reuse existing pages with English document language and
     assert.equal(attr(all.find(node => node.tagName === 'html'), 'lang'), 'en', file);
     assert.equal(attr(all.find(node => node.tagName === 'link' && attr(node, 'rel') === 'canonical'), 'href'), canonicalUrl(page, 'pt-BR'), file);
     assert.equal(all.some(node => node.tagName === 'link' && attr(node, 'hreflang') === 'pt-BR'), false, file);
-    const selector = all.find(node => node.tagName === 'a' && attr(node, 'data-site-locale') === 'pt-BR');
-    assert.ok(selector, `${file}: pt-BR route selector`);
-    assert.equal(attr(selector, 'href'), localPagePath(page, 'pt-BR', cloudflare), file);
+    for (const locale of ['en', 'zh', 'pt-BR']) {
+      const option = all.find(node => node.tagName === 'a' && attr(node, 'data-language-option') === locale);
+      assert.ok(option, `${file}: ${locale} language option`);
+      assert.equal(attr(option, 'href'), localPagePath(page, locale, cloudflare), file);
+      assert.equal(attr(option, 'hidden') !== undefined, locale === 'pt-BR', file);
+    }
 
     for (const lang of ['en', 'zh']) {
       const sourceFile = lang === 'zh' ? (page === 'index' ? 'zh.html' : `zh/${page}.html`) : (page === 'index' ? 'index.html' : `${page}.html`);
@@ -109,9 +117,12 @@ test('built pt-BR routes reuse existing pages with English document language and
       const sourceNodes = [];
       const collect = node => { sourceNodes.push(node); for (const child of node.childNodes || []) collect(child); };
       collect(sourceDocument);
-      const sourceSelector = sourceNodes.find(node => node.tagName === 'a' && attr(node, 'data-site-locale') === 'pt-BR');
-      assert.ok(sourceSelector, `${sourceFile}: pt-BR selector`);
-      assert.equal(attr(sourceSelector, 'href'), localPagePath(page, 'pt-BR', cloudflare), sourceFile);
+      for (const locale of ['en', 'zh', 'pt-BR']) {
+        const option = sourceNodes.find(node => node.tagName === 'a' && attr(node, 'data-language-option') === locale);
+        assert.ok(option, `${sourceFile}: ${locale} language option`);
+        assert.equal(attr(option, 'href'), localPagePath(page, locale, cloudflare), sourceFile);
+        assert.equal(attr(option, 'hidden') !== undefined, locale === lang, sourceFile);
+      }
     }
   }
 });

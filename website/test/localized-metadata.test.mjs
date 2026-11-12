@@ -41,7 +41,7 @@ test('metadata points both hosts to real localized canonical pages and honest so
 
 function runtime({ href, base, lang = 'en', page = 'start', cloudflare = false, stored = 'zh' }) {
   let redirected, replaced, ready;
-  const switcher = { href: '', addEventListener() {} };
+  const switcher = { href: '' };
   const window = {
     location: { href, replace(value) { redirected = value; } },
     localStorage: { getItem() { return stored; }, setItem() {} },
@@ -51,7 +51,7 @@ function runtime({ href, base, lang = 'en', page = 'start', cloudflare = false, 
     documentElement: {}, baseURI: base,
     getElementById() { return { textContent: JSON.stringify({ lang, contentLang: lang === 'zh' ? 'zh' : 'en', page, cloudflare, locales: siteLocales, routedLocales: siteRoutedLocales }) }; },
     addEventListener(_event, callback) { ready = callback; },
-    querySelectorAll(selector) { return selector === '[data-language-switch]' ? [switcher] : []; },
+    querySelectorAll() { return []; },
   };
   vm.runInNewContext(fs.readFileSync(new URL('../src/scripts/site-language.js', import.meta.url), 'utf8'), { window, document, URL });
   ready();
@@ -76,7 +76,7 @@ test('URL locale wins stored preference and route switches preserve query and ha
     assert.equal(next.searchParams.get('query'), 'cache');
     assert.equal(next.searchParams.has('lang'), false);
     assert.equal(next.hash, '#install');
-    assert.equal(result.switcher.href, result.redirected);
+    assert.equal(new URL(result.api.pageFrom('zh')).pathname, new URL(setup.expected).pathname);
   }
   const chinese = runtime({ href: 'https://archify.si/zh/start?lang=zh#install', base: 'https://archify.si/', lang: 'zh', cloudflare: true, stored: 'en' });
   assert.equal(chinese.api.read(), 'zh');
@@ -108,8 +108,12 @@ test('built pages contain localized HTML and reciprocal language metadata before
       const sharedLabels = all.find(node => attr(node, 'id') === 'site-proof-labels');
       assert.deepEqual(JSON.parse(text(sharedLabels)), defaultProofLabels, file);
     }
-    const switcher = all.find(node => attr(node, 'data-language-switch') !== undefined);
-    assert.equal(switcher.tagName, 'a', file);
+    for (const locale of ['en', 'zh', 'pt-BR']) {
+      const option = all.find(node => attr(node, 'data-language-option') === locale);
+      assert.equal(option.tagName, 'a', `${file}: ${locale}`);
+      assert.equal(attr(option, 'href'), localPagePath(page, locale, process.env.ARCHIFY_SITE_TARGET === 'cloudflare'), file);
+      assert.equal(attr(option, 'hidden') !== undefined, locale === lang, file);
+    }
     const main = all.find(node => node.tagName === 'body');
     const visible = nodes(main).filter(node => node.nodeName === '#text' && !['script', 'style'].includes(node.parentNode?.tagName)).map(node => node.value).join('');
     if (lang === 'zh') assert.match(visible, /[\u4e00-\u9fff]/, file);

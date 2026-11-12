@@ -68,7 +68,7 @@ test('community catalog: filter buttons cover the types present in the registry'
   );
 });
 
-test('community catalog: navigation, language toggle and disclaimer are present', () => {
+test('community catalog: navigation, language menu and disclaimer are present', () => {
   const dom = communityDom();
   const bases = elements(dom, 'base');
   assert.equal(bases.length, 1);
@@ -76,10 +76,15 @@ test('community catalog: navigation, language toggle and disclaimer are present'
   const baseUri = new URL(attr(bases[0], 'href'), 'https://tt-a1i.github.io/archify/community.html');
   const links = elements(dom, 'a').map(node => new URL(attr(node, 'href'), baseUri).pathname);
   assert.ok(links.includes('/archify/community.html'), 'primary navigation must link to the catalog under the Pages base');
-  const languageButton = elements(dom, 'a').find((node) => attr(node, 'id') === 'language');
-  assert.ok(languageButton, 'language route link must be present');
-  assert.equal(new URL(attr(languageButton, 'href'), baseUri).href, 'https://tt-a1i.github.io/archify/zh/community.html');
-  assert.equal(attr(languageButton, 'hreflang'), 'zh-Hans');
+  const languageButton = elements(dom, 'button').find(node => attr(node, 'data-language-toggle') !== undefined);
+  assert.ok(languageButton, 'globe language selector must be present');
+  assert.equal(attr(languageButton, 'aria-haspopup'), 'menu');
+  assert.equal(attr(languageButton, 'aria-expanded'), 'false');
+  const languageOptions = elements(dom, 'a').filter(node => attr(node, 'data-language-option'));
+  assert.deepEqual(languageOptions.map(node => attr(node, 'data-language-option')), ['en', 'zh', 'pt-BR']);
+  assert.deepEqual(languageOptions.map(node => new URL(attr(node, 'href'), baseUri).pathname), [
+    '/archify/community.html', '/archify/zh/community.html', '/archify/pt-BR/community.html',
+  ]);
   const html = fs.readFileSync(path.join(dist, 'community.html'), 'utf8');
   assert.match(html, /Listing is not endorsement/, 'must carry the no-endorsement disclaimer');
   const submission = elements(dom, 'a').find((node) => (attr(node, 'href') || '').includes('github.com/tt-a1i/archify/tree/main/community'));

@@ -30,6 +30,7 @@ export function createCommunityFixture() {
     'scripts/site-copy.mjs', 'scripts/check-community-packages.mjs',
     'docs/gallery/', 'docs/assets/', ...PUBLISHED_CASES.flatMap(entry => [`docs/${entry.artifact}`, `docs/${entry.input}`])], { cwd: repoRoot, encoding: 'utf8' })
     .split('\0').filter(Boolean);
+  if (fs.existsSync(path.join(repoRoot, 'website/src/assets/globe.svg')) && !tracked.includes('website/src/assets/globe.svg')) tracked.push('website/src/assets/globe.svg');
   for (const relative of tracked) copy(relative);
   for (const locale of siteRoutedLocales) {
     for (const page of sitePages) {

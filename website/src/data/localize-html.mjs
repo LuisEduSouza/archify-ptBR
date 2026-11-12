@@ -28,13 +28,10 @@ export function localizeHtml(html, { lang, page, cloudflare, copy = {} }) {
     const placeholderKey = get('data-i18n-placeholder');
     const placeholder = copy[lang]?.[placeholderKey] ?? copy[contentLocaleFor(lang)]?.[placeholderKey] ?? copy.en?.[placeholderKey];
     if (typeof placeholder === 'string') set('placeholder', placeholder);
-    if (get('data-language-switch') !== undefined) {
-      set('href', localPagePath(page, lang === 'zh' ? 'en' : 'zh', cloudflare));
-      set('hreflang', lang === 'zh' ? 'en' : 'zh-Hans');
-      set('aria-label', lang === 'zh' ? 'Switch to English' : '切换到中文');
-      node.childNodes = [{ nodeName: '#text', value: lang === 'zh' ? 'EN' : '中文', parentNode: node }];
-    } else if (get('data-site-locale') === 'pt-BR') {
-      set('href', localPagePath(page, 'pt-BR', cloudflare));
+    if (get('data-language-option')) {
+      const locale = get('data-language-option');
+      set('href', localPagePath(page, locale, cloudflare));
+      if (locale === lang) set('hidden', '');
     } else if (node.tagName === 'a') {
       const href = get('href');
       const match = href?.match(/^(?:(index|guide|start|gallery|community|agent-diagrams|cases\/mco-runtime)\.html|(\.\/))([?#].*)?$/);

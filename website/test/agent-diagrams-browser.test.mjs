@@ -62,6 +62,10 @@ test('real Chrome: agent guide stays readable and navigable in both languages, t
       await loaded;
       await evaluate('document.fonts.ready');
     };
+    const switchLanguage = async locale => {
+      await evaluate('document.querySelector("[data-language-toggle]").click()');
+      await loadedAction(() => evaluate(`document.querySelector('[data-language-option="${locale}"]').click()`));
+    };
     const assertSectionVisible = async () => {
       const position = await evaluate(`(async () => {
         // Let native smooth fragment navigation finish, without overriding it.
@@ -170,8 +174,8 @@ test('real Chrome: agent guide stays readable and navigable in both languages, t
       await settled();
       assert.equal(await evaluate('location.hash'), '#cache-scenarios');
       const tocPosition = await assertSectionVisible();
-      await loadedAction(() => evaluate(`document.querySelector('[data-language-switch]').click()`));
       const other = lang === 'en' ? 'zh' : 'en';
+      await switchLanguage(other);
       assert.equal(await evaluate('location.pathname'), new URL(urlFor('agent-diagrams', other)).pathname);
       assert.equal(await evaluate('document.documentElement.lang'), other === 'zh' ? 'zh-Hans' : 'en');
       assert.equal(await evaluate('location.hash'), '#cache-scenarios');
@@ -181,7 +185,7 @@ test('real Chrome: agent guide stays readable and navigable in both languages, t
       await settled();
       assert.equal(await evaluate('location.hash'), '#description-workflow');
       const workflowPosition = await assertSectionVisible();
-      await loadedAction(() => evaluate(`document.querySelector('[data-language-switch]').click()`));
+      await switchLanguage(lang);
       assert.equal(await evaluate('location.pathname'), new URL(urlFor('agent-diagrams', lang)).pathname);
       assert.equal(await evaluate('location.hash'), '#description-workflow');
       const workflowLocalePosition = await assertSectionVisible();
@@ -189,11 +193,11 @@ test('real Chrome: agent guide stays readable and navigable in both languages, t
       await settled();
       assert.equal(await evaluate('location.hash'), '#mermaid-input');
       const mermaidPosition = await assertSectionVisible();
-      await loadedAction(() => evaluate(`document.querySelector('[data-language-switch]').click()`));
+      await switchLanguage(other);
       assert.equal(await evaluate('location.pathname'), new URL(urlFor('agent-diagrams', other)).pathname);
       assert.equal(await evaluate('location.hash'), '#mermaid-input');
       const mermaidLocalePosition = await assertSectionVisible();
-      await loadedAction(() => evaluate(`document.querySelector('[data-language-switch]').click()`));
+      await switchLanguage(lang);
       assert.equal(await evaluate('location.pathname'), new URL(urlFor('agent-diagrams', lang)).pathname);
       assert.equal(await evaluate('location.hash'), '#mermaid-input');
       await loadedAction(() => evaluate(`document.querySelector('.article-body a[href*="type=workflow"]').click()`));
