@@ -97,20 +97,20 @@ const { lang = 'en' } = Astro.props;
             </article>
           ))}
         </div>
-        <div class="empty-state" id="empty-state" data-en="No packages match this filter." data-zh="当前筛选条件下没有收录包。">No packages match this filter.</div>
+        <div class="empty-state" id="empty-state" data-en="No packages match this filter." data-zh="当前筛选条件下没有收录包。" data-ptBR="Nenhum pacote corresponde a esse filtro.">No packages match this filter.</div>
       </div>
     </section>
 
     <section class="method">
       <div class="shell method-grid">
         <div>
-          <div class="lead-label" data-en="Join the registry" data-zh="加入注册表">Join the registry</div>
-          <h2 data-en="A pull request is the submission." data-zh="一次 PR 就是提交。">A pull request is the submission.</h2>
+          <div class="lead-label" data-en="Join the registry" data-zh="加入注册表" data-ptBR="Inscreva-se no cadastro">Join the registry</div>
+          <h2 data-en="A pull request is the submission." data-zh="一次 PR 就是提交。" data-ptBR="Uma solicitação de pull é o envio.">A pull request is the submission.</h2>
           <div class="pipeline" aria-label="Submission pipeline">
-            <div class="pipeline-step"><span class="pipeline-num">01</span><span class="pipeline-label" data-en="Publish your package in your own repo" data-zh="在你自己的仓库发布你的包">Publish your package in your own repo</span><span class="pipeline-state you">YOU</span></div>
-            <div class="pipeline-step"><span class="pipeline-num">02</span><span class="pipeline-label" data-en="Add one metadata file under community/packages/" data-zh="在 community/packages/ 下添加一个元数据文件">Add one metadata file under community/packages/</span><span class="pipeline-state you">YOU</span></div>
-            <div class="pipeline-step"><span class="pipeline-num">03</span><span class="pipeline-label" data-en="Validate with check-community-packages.mjs" data-zh="运行 check-community-packages.mjs 校验">Validate with check-community-packages.mjs</span><span class="pipeline-state">PASS</span></div>
-            <div class="pipeline-step"><span class="pipeline-num">04</span><span class="pipeline-label" data-en="Open a PR targeting dev — publication follows main deployment" data-zh="向 dev 提 PR——进入 main 并部署后上线">Open a PR targeting dev — publication follows main deployment</span><span class="pipeline-state">PASS</span></div>
+            <div class="pipeline-step"><span class="pipeline-num">01</span><span class="pipeline-label" data-en="Publish your package in your own repo" data-zh="在你自己的仓库发布你的包" data-ptBR="Publique seu pacote no seu próprio repositório">Publish your package in your own repo</span><span class="pipeline-state you">YOU</span></div>
+            <div class="pipeline-step"><span class="pipeline-num">02</span><span class="pipeline-label" data-en="Add one metadata file under community/packages/" data-zh="在 community/packages/ 下添加一个元数据文件" data-ptBR="Adicione um arquivo de metadados na pasta community/packages/">Add one metadata file under community/packages/</span><span class="pipeline-state you">YOU</span></div>
+            <div class="pipeline-step"><span class="pipeline-num">03</span><span class="pipeline-label" data-en="Validate with check-community-packages.mjs" data-zh="运行 check-community-packages.mjs 校验" data-ptBR="Valide com o arquivo check-community-packages.mjs">Validate with check-community-packages.mjs</span><span class="pipeline-state">PASS</span></div>
+            <div class="pipeline-step"><span class="pipeline-num">04</span><span class="pipeline-label" data-en="Open a PR targeting dev — publication follows main deployment" data-zh="向 dev 提 PR——进入 main 并部署后上线" data-ptBR="Abra um PR direcionado à equipe de desenvolvimento — a publicação ocorre após a implantação principal">Open a PR targeting dev — publication follows main deployment</span><span class="pipeline-state">PASS</span></div>
           </div>
         </div>
         <div class="method-code">
@@ -125,7 +125,7 @@ const { lang = 'en' } = Astro.props;
 
 # open PR to dev → review
 # promote to main → deploy → public catalog</pre>
-          <a class="card-link method-link" href="https://github.com/tt-a1i/archify/tree/main/community#submitting-a-package" target="_blank" rel="noopener noreferrer" data-en="Read the submission guide ↗" data-zh="阅读提交指南 ↗">Read the submission guide ↗</a>
+          <a class="card-link method-link" href="https://github.com/tt-a1i/archify/tree/main/community#submitting-a-package" target="_blank" rel="noopener noreferrer" data-en="Read the submission guide ↗" data-zh="阅读提交指南 ↗" data-ptBR="Leia o guia de envio ↗">Read the submission guide ↗</a>
         </div>
       </div>
     </section>
@@ -133,7 +133,7 @@ const { lang = 'en' } = Astro.props;
 
   <footer>
     <div class="shell footer-inner">
-      <span data-en="Community packages are maintained by their authors. Listing is not endorsement; Archify never executes package code." data-zh="社区包由各自作者维护。收录不代表官方背书；Archify 绝不执行第三方包的代码。">Community packages are maintained by their authors. Listing is not endorsement; Archify never executes package code.</span>
+      <span data-en="Community packages are maintained by their authors. Listing is not endorsement; Archify never executes package code." data-zh="社区包由各自作者维护。收录不代表官方背书；Archify 绝不执行第三方包的代码。" data-ptBR="Os pacotes da comunidade são mantidos por seus autores. A inclusão na lista não constitui endosso; o Archify nunca executa o código dos pacotes.">Community packages are maintained by their authors. Listing is not endorsement; Archify never executes package code.</span>
       <span data-en={`Archify v${version} · ${productChannel} · MIT`} data-zh={`Archify v${version} · ${productChannel === 'stable' ? '稳定版' : '开发版'} · MIT`}>Archify v{version} · {productChannel} · MIT</span>
     </div>
   </footer>
