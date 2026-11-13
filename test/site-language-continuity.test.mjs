@@ -111,6 +111,11 @@ async function clickAndNavigate(browser, sessionId, selector) {
   }
 }
 
+async function switchLanguage(browser, sessionId, locale) {
+  await evaluate(browser, sessionId, 'document.querySelector("[data-language-toggle]").click()');
+  await clickAndNavigate(browser, sessionId, `[data-language-option="${locale}"]`);
+}
+
 function startStaticServer(root, basePath = '') {
   const server = http.createServer((request, response) => {
     const requestUrl = new URL(request.url || '/', 'http://127.0.0.1');
@@ -547,6 +552,23 @@ test('real Chrome preserves language through entry, navigation, selection, refre
 
     await navigate(browser, sessionId, `${baseUrl}/index.html`);
     await evaluate(browser, sessionId, 'localStorage.clear()');
+    if (builtSite) {
+      assert.deepEqual(await evaluate(browser, sessionId, `(function () {
+        var button = document.querySelector('[data-language-toggle]');
+        var menu = document.querySelector('[role="menu"]');
+        var options = [...menu.querySelectorAll('[data-language-option]')];
+        var accessible = button.getAttribute('aria-haspopup') === 'menu' && button.getAttribute('aria-expanded') === 'false';
+        button.focus();
+        button.dispatchEvent(new KeyboardEvent('keydown', { key: 'ArrowDown', bubbles: true }));
+        var arrowOpens = !menu.hidden && button.getAttribute('aria-expanded') === 'true' && document.activeElement === options.find(option => !option.hidden);
+        document.activeElement.dispatchEvent(new KeyboardEvent('keydown', { key: 'Escape', bubbles: true }));
+        var escapeCloses = menu.hidden && button.getAttribute('aria-expanded') === 'false' && document.activeElement === button;
+        button.click();
+        document.body.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+        var outsideCloses = menu.hidden && button.getAttribute('aria-expanded') === 'false';
+        return { accessible, currentHidden: options.filter(option => option.hidden).length, arrowOpens, escapeCloses, outsideCloses };
+      })()`), { accessible: true, currentHidden: 1, arrowOpens: true, escapeCloses: true, outsideCloses: true });
+    }
 
     await evaluate(browser, sessionId, "localStorage.setItem('archify-guide-language', 'zh')");
     await navigate(browser, sessionId, `${baseUrl}/index.html`);
@@ -612,17 +634,16 @@ test('real Chrome preserves language through entry, navigation, selection, refre
 
     if (builtSite) {
       await evaluate(browser, sessionId, "history.replaceState(null, '', location.pathname + '?type=architecture&utm_source=switch#proof')");
-      assert.equal(await evaluate(browser, sessionId, 'document.querySelector("[data-language-switch]").tagName'), 'A');
-      await clickAndNavigate(browser, sessionId, '[data-language-switch]');
+      await switchLanguage(browser, sessionId, 'en');
       assert.equal(await evaluate(browser, sessionId, 'location.href'), pageUrl('gallery.html', 'en', '?type=architecture&utm_source=switch#proof'));
       assert.equal(await evaluate(browser, sessionId, `document.querySelector('[data-filter="architecture"]').getAttribute('aria-pressed')`), 'true');
-      await clickAndNavigate(browser, sessionId, '[data-language-switch]');
+      await switchLanguage(browser, sessionId, 'zh');
       assert.equal(await evaluate(browser, sessionId, 'location.href'), pageUrl('gallery.html', 'zh', '?type=architecture&utm_source=switch#proof'));
       assert.equal(await evaluate(browser, sessionId, 'document.documentElement.lang'), chineseLang);
-      await clickAndNavigate(browser, sessionId, '[data-language-switch]');
+      await switchLanguage(browser, sessionId, 'en');
       assert.equal(await evaluate(browser, sessionId, 'location.href'), pageUrl('gallery.html', 'en', '?type=architecture&utm_source=switch#proof'));
     } else {
-      await evaluate(browser, sessionId, 'document.getElementById("language").click()');
+      await switchLanguage(browser, sessionId, 'en');
     }
     assert.equal(await evaluate(browser, sessionId, 'document.documentElement.lang'), 'en');
     assert.equal(await evaluate(browser, sessionId, 'document.querySelector(".nav-logo-path").textContent'), '/ proof lab');
@@ -687,7 +708,7 @@ test('real Chrome preserves language through entry, navigation, selection, refre
         return card.dataset.recipe;
       })()`), selectedRecipe.id, 'first workflow card matches the canonical recipe inventory');
       for (const language of ['zh', 'en']) {
-        await clickAndNavigate(browser, sessionId, '[data-language-switch]');
+        await switchLanguage(browser, sessionId, language);
         assert.equal(await evaluate(browser, sessionId, 'location.href'), pageUrl('guide.html', language, suffix));
         assert.deepEqual(await evaluate(browser, sessionId, `({
           language: document.documentElement.lang,
@@ -730,7 +751,7 @@ test('real Chrome preserves language through entry, navigation, selection, refre
         var nav = document.querySelector('.site-nav');
         var logo = nav.querySelector('.nav-logo-text');
         var actions = nav.querySelector('.nav-right');
-        var language = nav.querySelector('.btn-lang');
+        var language = nav.querySelector('.language-toggle');
         var cta = nav.querySelector('.nav-cta');
         var navStyle = getComputedStyle(nav);
         var logoStyle = getComputedStyle(logo);
